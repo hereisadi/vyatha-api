@@ -6,5 +6,5 @@ app.use(express.json());
 
 connectToDB();
 
-app.use("/home", userRoutes);
+app.use("/", userRoutes);
 module.exports = app;
