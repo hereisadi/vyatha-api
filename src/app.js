@@ -7,5 +7,9 @@ app.use(express.json());
 
 connectToDB();
 
+app.use('/api/auth/student', require('./routes/student/studentLogin'));
+app.use('/api/auth/admin', require('./routes/admin/adminLogin'));
+
+
 app.use("/", userRoutes);
 module.exports = app;
