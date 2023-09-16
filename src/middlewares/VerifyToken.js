@@ -1,5 +1,5 @@
-const verifyToken = (req, res, next) => {};
+const verifyToken = (req, res, next) => {}
 
 module.exports = {
     verifyToken
-  };
+  }
