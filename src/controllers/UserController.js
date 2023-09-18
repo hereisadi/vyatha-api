@@ -5,9 +5,9 @@ const home = (req, res) => {
   res.send("<p>Welcome to Vyatha api.</p>");
 };
 
-const signUp = async () => {};
-const logIn = async () => {};
+// const signUp = async () => {};
+// const logIn = async () => {};
 
 module.exports = {
-  home
+  home,
 };
