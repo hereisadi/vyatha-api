@@ -7,7 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js",
     "dev": "nodemon index.js",
-    "build": "npm install"
+    "build": "npm install",
+    "lint": "eslint . --ext .js --fix",
+    "pretty": "prettier --write .",
+    "precommit": "lint-staged",
+    "prepare": "simple-git-hooks"
   },
   "keywords": [],
   "author": "UC Maintainers and Developers",
@@ -35,12 +39,12 @@
     "simple-git-hooks": "^2.9.0"
   },
   "simple-git-hooks": {
-    "pre-commit": "npm precommit"
+    "pre-commit": "npm run precommit"
   },
   "lint-staged": {
     "*.(js)": [
-      "npm lint",
-      "npm pretty"
+      "npm run lint",
+      "npm run pretty"
     ]
   }
 }
