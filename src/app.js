@@ -7,5 +7,5 @@ app.use(express.json());
 
 connectToDB();
 
-app.use("/", userRoutes);
+app.use('/vyatha/api', userRoutes);
 module.exports = app;

@@ -26,29 +26,32 @@ const studentLogin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    let user = await User.findOne({ email, role: 'student' });
+    const user = await User.findOne({ email, role: 'student' });
 
     if (!user) {
-      return res.status(400).json({ error: "Please try with correct student credentials" });
+      return res.status(401).json({ error: "Please try with correct student credentials" });
     }
 
     const passwordCompare = await bcrypt.compare(password, user.password);
     if (!passwordCompare) {
-      return res.status(400).json({ error: "Please try with correct student credentials" });
+      return res.status(401).json({ error: "Please try with correct student credentials" });
     }
+
+    const expiresIn = 15 * 24 * 60 * 60; // 15 days in seconds
 
     const data = {
       user: {
-        id: user.id,
+        _id: user._id,
+        email:user.email,
         role: 'student',
       },
     };
-    const authtoken = jwt.sign(data, process.env.JWT_SECRET);
+    const authtoken = jwt.sign(data, process.env.JWT_SECRET,{ expiresIn });
 
-    res.json({ authtoken });
+    res.status(200).json({ message: "Login successful", authtoken });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).send("Internal server error");
+    console.log(error);
+    res.status(500).json({error:"Internal server error"});
   }
 };
 
@@ -59,29 +62,31 @@ const adminLogin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    let user = await User.findOne({ email, role: 'admin' });
+    const user = await User.findOne({ email, role: 'admin' });
 
     if (!user) {
-      return res.status(400).json({ error: "Please try with correct admin credentials" });
+      return res.status(401).json({ error: "Please try with correct admin credentials" });
     }
 
     const passwordCompare = await bcrypt.compare(password, user.password);
     if (!passwordCompare) {
-      return res.status(400).json({ error: "Please try with correct admin credentials" });
+      return res.status(401).json({ error: "Please try with correct admin credentials" });
     }
 
+    const expiresIn = 15 * 24 * 60 * 60;
     const data = {
       user: {
-        id: user.id,
+        _id: user._id,
+        email: user.email,
         role: 'admin',
       },
     };
-    const authtoken = jwt.sign(data, process.env.JWT_SECRET);
+    const authtoken = jwt.sign(data, process.env.JWT_SECRET ,{ expiresIn } );
 
-    res.json({ authtoken });
+    res.status(200).json({ message: "Login succesful", authtoken });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).send("Internal server error");
+    console.log(error);
+    res.status(500).json("Internal server error");
   }
 };
 
