@@ -1,0 +1,30 @@
+name: Admin Merge PR
+
+on:
+  pull_request:
+    types:
+      - synchronize
+      - opened
+      - reopened
+
+jobs:
+  check-merge-ability:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if the user is an admin
+        id: admin-check
+        run: echo "::set-output name=is_admin::$(if [ \"$(jq '.sender.site_admin' $GITHUB_EVENT_PATH)\" == \"true\" ]; then echo \"true\"; else echo \"false\"; fi)"
+
+      - name: Ensure only admin can merge
+        run: |
+          if [[ "${{ steps.admin-check.outputs.is_admin }}" == "false" ]]; then
+            echo "Only administrators can merge pull requests."
+            exit 1
+          fi
+        shell: bash
+
+      - name: Complete the workflow
+        run: |
+          echo "Admin check passed. The user is an admin."
+        shell: bash
