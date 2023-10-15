@@ -1,5 +1,5 @@
 // models/Admin.js
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const adminSchema = new mongoose.Schema({
   name: {
@@ -13,7 +13,7 @@ const adminSchema = new mongoose.Schema({
   },
   designation: {
     type: String,
-    enum: ['supervisor', 'warden', 'xyz'],
+    enum: ["supervisor", "warden", "xyz"],
     required: true,
   },
   phone: {
@@ -26,4 +26,4 @@ const adminSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('Admin', adminSchema);
+module.exports = mongoose.model("Admin", adminSchema);
