@@ -10,10 +10,8 @@ on:
   issues:
     types: [opened, edited, milestoned, demilestoned, closed, reopened]
 
-  
   issue_comment:
     types: [created, edited, deleted]
-
 
 jobs:
   eslint:
@@ -28,9 +26,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 18.12.1
-
-      
-        
 
       - name: Install dependencies
         run: npm install
