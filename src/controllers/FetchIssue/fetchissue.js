@@ -4,6 +4,11 @@ const { IssueRegModel } = require("../../models/issues/issue");
 
 // get request to fetch all the issues for student, warden, supervisor, dsw and superadmin
 
+// GET Registered issue
+// role: student, supervisor, warden, dsw, superadmin
+// access: private
+// endpoint: /fetchissues
+
 const fetchIssues = async (req, res) => {
   verifyToken(req, res, async () => {
     try {
@@ -32,6 +37,7 @@ const fetchIssues = async (req, res) => {
       } else if (user.role === "supervisor") {
         const issuesAssignedToSupervisor = await IssueRegModel.find({
           forwardedTo: "supervisor",
+          hostel: user.hostel,
         }).sort({
           IssueForwardedAtToSupervisor: -1, // sort from newest to oldest; +1 for oldest to newest
         });
@@ -44,6 +50,7 @@ const fetchIssues = async (req, res) => {
       } else if (user.role === "warden") {
         const issuesAssignedToWarden = await IssueRegModel.find({
           forwardedTo: "warden",
+          hostel: user.hostel,
         }).sort({
           IssueForwardedAtToWarden: -1,
         });
@@ -57,6 +64,7 @@ const fetchIssues = async (req, res) => {
       } else if (user.role === "dsw") {
         const issuesAssignedToDsw = await IssueRegModel.find({
           forwardedTo: "dsw",
+          hostel: user.hostel,
         }).sort({
           IssueForwardedAtToDsw: -1,
         });

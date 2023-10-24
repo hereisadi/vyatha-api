@@ -4,6 +4,11 @@ const { IssueRegModel } = require("../../models/issues/issue");
 const moment = require("moment-timezone");
 
 // put request
+// PUT issue mark solved
+// payload: issueID
+// role = supervisor
+// access: private
+/// endpoint : /issuesolved
 
 const markedAsSolved = async (req, res) => {
   verifyToken(req, res, async () => {

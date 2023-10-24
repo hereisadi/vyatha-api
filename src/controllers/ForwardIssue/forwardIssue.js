@@ -4,6 +4,13 @@ const { IssueRegModel } = require("../../models/issues/issue");
 const moment = require("moment-timezone");
 
 // put request
+
+// PUT forward issue
+// payload: issueID
+// role = supervisor, warden
+// access: private
+// endpoint: /forwardissue
+
 const forwardIssue = async (req, res) => {
   verifyToken(req, res, async () => {
     try {

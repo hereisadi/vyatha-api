@@ -3,6 +3,11 @@ const { SignUpModel } = require("../../models/Localauth/Signup");
 
 // get request
 
+// GET all accounts
+// role:  superadmin
+// access: private
+// endpoint: /getallaccounts
+
 const getAllAccounts = async (req, res) => {
   verifyToken(req, res, async () => {
     try {

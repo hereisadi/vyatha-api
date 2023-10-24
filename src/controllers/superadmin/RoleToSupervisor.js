@@ -3,6 +3,12 @@ const { SignUpModel } = require("../../models/Localauth/Signup");
 const moment = require("moment-timezone");
 // put request
 
+// PUT promote to supervisor role
+// payload: accountID
+// role : superadmin
+// access : private
+// endpoint : /promotetosupervisor
+
 const roleToSupervisor = (req, res) => {
   verifyToken(req, res, async () => {
     try {

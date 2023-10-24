@@ -3,6 +3,11 @@ const { SignUpModel } = require("../../models/Localauth/Signup");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+// POST account login
+// role:  all
+// access: public
+// endpoint: /login
+
 const login = async (req, res) => {
   const { email, password } = req.body; // client should email and password as payload
 

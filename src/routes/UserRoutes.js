@@ -17,6 +17,10 @@ const {
   roleToSupervisor,
 } = require("../controllers/superadmin/RoleToSupervisor");
 const { roleToWarden } = require("../controllers/superadmin/RoleToWarden");
+const { editPrfoile } = require("../controllers/LocalAuth/Editprofile");
+const {
+  detailedViewOfIssue,
+} = require("../controllers/FetchIssue/DetailedViewOfIssue");
 
 // get
 router.get("/", home.home);
@@ -27,6 +31,7 @@ router.get("/getallaccounts", getAllAccounts);
 router.post("/createissue", issueReg);
 router.post("/signup", signup);
 router.post("/login", login);
+router.post("/detailedview", detailedViewOfIssue);
 
 // put
 router.put("/forwardissue", forwardIssue);
@@ -35,6 +40,7 @@ router.put("/demoterole", demoteRole);
 router.put("/promotetodsw", roleToDsw);
 router.put("/promotetosupervisor", roleToSupervisor);
 router.put("/promotetowarden", roleToWarden);
+router.put("/editprofile", editPrfoile);
 
 //delete
 router.delete("/deleteaccount", deleteAccount);

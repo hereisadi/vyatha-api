@@ -3,6 +3,12 @@ const { SignUpModel } = require("../../models/Localauth/Signup");
 const moment = require("moment-timezone");
 // put request to update the role to warden
 
+// PUT
+// role : superadmin
+// access : private
+// payload: accountID
+//endpoint : /demoterole
+
 const demoteRole = (req, res) => {
   verifyToken(req, res, async () => {
     try {

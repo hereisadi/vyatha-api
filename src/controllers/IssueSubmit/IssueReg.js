@@ -4,6 +4,12 @@ const { IssueRegModel } = require("../../models/issues/issue");
 const moment = require("moment-timezone");
 
 // post request
+
+// POST issue registration
+// role:  student
+// access: private
+// endpoint: /createissue
+
 const issueReg = async (req, res) => {
   verifyToken(req, res, async () => {
     try {
@@ -18,7 +24,7 @@ const issueReg = async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      const { role, name, email } = user;
+      const { role, name, email, hostel } = user;
 
       // only student can file an issue
       if (role === "student") {
@@ -35,6 +41,7 @@ const issueReg = async (req, res) => {
           email,
           description,
           photo,
+          hostel,
           IssueCreatedAt: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
           IssueForwardedAtToSupervisor: moment
             .tz("Asia/Kolkata")

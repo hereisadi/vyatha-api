@@ -2,6 +2,11 @@ const { SignUpModel } = require("../../models/Localauth/Signup");
 const bcrypt = require("bcrypt");
 const moment = require("moment-timezone");
 
+// POST account signup
+// role:  all
+// access: public
+// endpoint: /signup
+
 const signup = async (req, res) => {
   try {
     const { name, email, password, cpassword } = req.body; // client should name, email, password and cpassword as payload

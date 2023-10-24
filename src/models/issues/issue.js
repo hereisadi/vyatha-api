@@ -17,6 +17,10 @@ const IssueRegSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  hostel: {
+    required: true,
+    type: String,
+  },
   forwardedTo: {
     type: String,
     default: "supervisor",

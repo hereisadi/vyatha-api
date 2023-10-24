@@ -13,6 +13,10 @@ const SignUpSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  hostel: {
+    required: true,
+    type: String,
+  },
   role: {
     default: "student",
     type: String,

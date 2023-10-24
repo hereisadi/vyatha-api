@@ -2,6 +2,12 @@ const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 // delete request to delete the  account
 
+// DELETE account
+// role: superadmin ONLY
+// payload: accountID
+// access: private
+// endpoint: /deleteaccount
+
 const deleteAccount = (req, res) => {
   verifyToken(req, res, async () => {
     try {
