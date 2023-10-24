@@ -1,7 +1,7 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const moment = require("moment-timezone");
-// put request to update the role to warden
+// put request to update the role to dsw
 
 const roleToDsw = (req, res) => {
   verifyToken(req, res, async () => {

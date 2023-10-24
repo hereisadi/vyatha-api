@@ -3,6 +3,7 @@ const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
 const moment = require("moment-timezone");
 
+// post request
 const issueReg = async (req, res) => {
   verifyToken(req, res, async () => {
     try {

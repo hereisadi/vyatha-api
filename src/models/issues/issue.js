@@ -36,6 +36,13 @@ const IssueRegSchema = new mongoose.Schema({
   IssueForwardedAtToDsw: {
     type: String,
   },
+  isSolved: {
+    type: String,
+    default: "false",
+  },
+  solvedAt: {
+    type: String,
+  },
 });
 
 const IssueRegModel = mongoose.model("IssueReg", IssueRegSchema);

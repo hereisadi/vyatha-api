@@ -1,6 +1,6 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
-// delete request to update the role to warden
+// delete request to delete the  account
 
 const deleteAccount = (req, res) => {
   verifyToken(req, res, async () => {
