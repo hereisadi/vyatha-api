@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+// const moment = require("moment-timezone");
 
 const IssueRegSchema = new mongoose.Schema({
   name: {
@@ -41,6 +42,7 @@ const IssueRegSchema = new mongoose.Schema({
     type: String,
   },
   isSolved: {
+    // only supervisor can mark an issue as solved
     type: String,
     default: "false",
   },
@@ -48,9 +50,19 @@ const IssueRegSchema = new mongoose.Schema({
     type: String,
   },
   isClosed: {
+    // only student can change to true
     type: Boolean,
     default: false,
   },
+  comments: [
+    {
+      author: String,
+      authorpic: String,
+      authoremail: String,
+      commentBody: String,
+      createdAt: String,
+    },
+  ],
 });
 
 const IssueRegModel = mongoose.model("IssueReg", IssueRegSchema);

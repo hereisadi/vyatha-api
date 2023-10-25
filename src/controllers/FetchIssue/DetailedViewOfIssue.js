@@ -8,6 +8,8 @@ const { IssueRegModel } = require("../../models/issues/issue");
 // access: private
 // endpoint: /detailedview
 
+// this might be converted to GET /detailedview/:issueId for ease of client team to send issueId as params
+
 const detailedViewOfIssue = async (req, res) => {
   verifyToken(req, res, async () => {
     try {

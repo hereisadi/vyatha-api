@@ -31,12 +31,15 @@ const {
 const {
   FetchAllClosedIssueHostelWise,
 } = require("../controllers/FetchIssue/superadmin/AllClosedHostelWise");
+const { addComment } = require("../controllers/comments/addcomment");
+const { getComments } = require("../controllers/comments/getComments");
 
 // get
 router.get("/", home.home);
 router.get("/fetchissues", fetchIssues);
 router.get("/getallaccounts", getAllAccounts);
 router.get("/fetchclosedissue", fetchClosedIssue);
+router.get("/getcomment/:issueID", getComments);
 
 // post
 router.post("/createissue", issueReg);
@@ -45,6 +48,7 @@ router.post("/login", login);
 router.post("/detailedview", detailedViewOfIssue);
 router.post("/fetchissuehostelwise", fetchIssueHostelWise);
 router.post("/fetchallclosedissuehostelwise", FetchAllClosedIssueHostelWise);
+router.post("/addcomment/:issueID", addComment);
 
 // put
 router.put("/forwardissue", forwardIssue);
