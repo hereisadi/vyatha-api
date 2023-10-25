@@ -56,11 +56,13 @@ const IssueRegSchema = new mongoose.Schema({
   },
   comments: [
     {
+      commentId: String,
       author: String,
       authorpic: String,
       authoremail: String,
       commentBody: String,
       createdAt: String,
+      editedAt: String,
     },
   ],
 });
