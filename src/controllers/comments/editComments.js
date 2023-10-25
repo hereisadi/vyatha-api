@@ -22,8 +22,8 @@ const editComment = (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      const { issueID } = req.body.params; // client should send issueID as params
-      const { commentID } = req.body.params; // client should send commentID as params
+      const { issueID } = req.params; // client should send issueID as params
+      const { commentID } = req.params; // client should send commentID as params
       const { commentBody } = req.body; // client should send commentBody as payload
 
       const issue = await IssueRegModel.findById(issueID);

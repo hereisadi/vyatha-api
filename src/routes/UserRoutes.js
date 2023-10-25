@@ -33,10 +33,12 @@ const {
 } = require("../controllers/FetchIssue/superadmin/AllClosedHostelWise");
 const { addComment } = require("../controllers/comments/addcomment");
 const { getComments } = require("../controllers/comments/getComments");
+const { editComment } = require("../controllers/comments/editComments");
 
 // get
 router.get("/", home.home);
 router.get("/fetchissues", fetchIssues);
+router.get("/detailedview/:issueId", detailedViewOfIssue);
 router.get("/getallaccounts", getAllAccounts);
 router.get("/fetchclosedissue", fetchClosedIssue);
 router.get("/getcomment/:issueID", getComments);
@@ -45,7 +47,7 @@ router.get("/getcomment/:issueID", getComments);
 router.post("/createissue", issueReg);
 router.post("/signup", signup);
 router.post("/login", login);
-router.post("/detailedview", detailedViewOfIssue);
+// router.post("/detailedview", detailedViewOfIssue);
 router.post("/fetchissuehostelwise", fetchIssueHostelWise);
 router.post("/fetchallclosedissuehostelwise", FetchAllClosedIssueHostelWise);
 router.post("/addcomment/:issueID", addComment);
@@ -59,6 +61,7 @@ router.put("/promotetosupervisor", roleToSupervisor);
 router.put("/promotetowarden", roleToWarden);
 router.put("/editprofile", editPrfoile);
 router.put("/closeissue", closeIssue);
+router.put("/editcomment/:issueID/:commentID", editComment);
 
 //delete
 router.delete("/deleteaccount", deleteAccount);

@@ -39,7 +39,9 @@ const fetchIssues = async (req, res) => {
         // for supervisor
       } else if (user.role === "supervisor") {
         const issuesAssignedToSupervisor = await IssueRegModel.find({
-          forwardedTo: "supervisor",
+          // below code has been commented out as all issues should be listed in the supervisor's dashboard, moreover only supervisor can mark any issue to be solved
+
+          // forwardedTo: "supervisor",
           hostel: user.hostel,
           isClosed: false,
         }).sort({

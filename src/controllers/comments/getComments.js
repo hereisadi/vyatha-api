@@ -24,7 +24,7 @@ const getComments = async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      const { issueID } = req.body.params;
+      const { issueID } = req.params;
       const issue = await IssueRegModel.findById(issueID);
       if (!issue) {
         return res.status(401).json({

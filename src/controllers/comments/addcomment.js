@@ -24,7 +24,7 @@ const addComment = async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      const { issueID } = req.body.params; // client should send issueID as params
+      const { issueID } = req.params; // client should send issueID as params
 
       const issue = await IssueRegModel.findById(issueID);
 

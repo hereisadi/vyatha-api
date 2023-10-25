@@ -10,6 +10,8 @@ const { IssueRegModel } = require("../../models/issues/issue");
 
 // this might be converted to GET /detailedview/:issueId for ease of client team to send issueId as params
 
+// UPD:26 oct 2023: converted to GET /detailedview/:issueId
+
 const detailedViewOfIssue = async (req, res) => {
   verifyToken(req, res, async () => {
     try {
@@ -26,7 +28,7 @@ const detailedViewOfIssue = async (req, res) => {
 
       // student's stuff
       if (user.role === "student") {
-        const { issueId } = req.body; // client should send issueId as payload
+        const { issueId } = req.params; // client should send issueId as params
         if (!issueId) {
           return res.status(401).json({ error: "No such issue exists" });
         }
@@ -47,7 +49,7 @@ const detailedViewOfIssue = async (req, res) => {
 
         // supervisor's stuff
       } else if (user.role === "supervisor") {
-        const { issueId } = req.body; // client should send issueId as payload
+        const { issueId } = req.params; // client should send issueId as params
         if (!issueId) {
           return res.status(401).json({ error: "No such issue exists" });
         }
@@ -58,7 +60,7 @@ const detailedViewOfIssue = async (req, res) => {
         }
 
         if (
-          issue.forwardedTo === "supervisor" &&
+          // issue.forwardedTo === "supervisor" &&
           issue.hostel === user.hostel
         ) {
           res.status(200).json({
@@ -74,7 +76,7 @@ const detailedViewOfIssue = async (req, res) => {
 
         // warden's stuff
       } else if (user.role === "warden") {
-        const { issueId } = req.body; // client should send issueId as payload
+        const { issueId } = req.params; // client should send issueId as params
         if (!issueId) {
           return res.status(401).json({ error: "No such issue exists" });
         }
@@ -99,7 +101,7 @@ const detailedViewOfIssue = async (req, res) => {
 
       // DSW's stuff
       else if (user.role === "dsw") {
-        const { issueId } = req.body; // client should send issueId as payload
+        const { issueId } = req.params; // client should send issueId as params
         if (!issueId) {
           return res.status(401).json({ error: "No such issue exists" });
         }
@@ -123,7 +125,7 @@ const detailedViewOfIssue = async (req, res) => {
 
         // superadmin's stuff
       } else if (user.role === "superadmin") {
-        const { issueId } = req.body; // client should send issueId as payload
+        const { issueId } = req.params; // client should send issueId as params
         if (!issueId) {
           return res.status(401).json({ error: "No such issue exists" });
         }
