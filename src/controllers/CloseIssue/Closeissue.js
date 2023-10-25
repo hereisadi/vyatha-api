@@ -1,16 +1,14 @@
-const { verifyToken } = require("../../middlewares/VerifyToken");
+const verifyToken = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
-const moment = require("moment-timezone");
 
-// put request
-// PUT issue mark solved
-// payload: issueID
-// role = supervisor
+// PUT  to solve the issue
+// role: student
 // access: private
-/// endpoint : /issuesolved
+// endpoint: /closeissue
+// payload: issueId
 
-const markedAsSolved = async (req, res) => {
+const closeIssue = async (req, res) => {
   verifyToken(req, res, async () => {
     try {
       const userId = req.user.userId;
@@ -24,22 +22,22 @@ const markedAsSolved = async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      if (user.role === "supervisor") {
-        const { issueID } = req.body; // client should send issueID as payload
-        const issue = await IssueRegModel.findById(issueID);
+      if (user.role === "student") {
+        const { issueId } = req.body;
+        const issue = await IssueRegModel.findById(issueId);
         if (!issue) {
           return res.status(401).json({
-            error: "No such issue exists",
+            success: false,
+            error: "No issue found with this id",
           });
         }
 
-        if (issue.hostel === user.hostel) {
-          issue.isSolved = "true";
-          issue.solvedAt = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
+        if (issue.email === user.email) {
+          issue.isClosed = true;
           await issue.save();
           res.status(200).json({
             success: true,
-            message: "Issue marked as solved",
+            message: "Issue closed successfully",
           });
         } else {
           return res.status(400).json({
@@ -48,20 +46,20 @@ const markedAsSolved = async (req, res) => {
           });
         }
       } else {
-        return res.status(401).json({
-          success: false,
-          error: "Only supervisor can mark an issue as soled",
-        });
+        return res
+          .status(401)
+          .json({ error: "Not Authorized to use this api endpoint" });
       }
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error(err);
       res.status(500).json({
-        error: "Internal server error",
+        success: false,
+        error: "Something went wrong on the server side",
       });
     }
   });
 };
 
 module.exports = {
-  markedAsSolved,
+  closeIssue,
 };

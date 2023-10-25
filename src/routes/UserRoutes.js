@@ -21,17 +21,30 @@ const { editPrfoile } = require("../controllers/LocalAuth/Editprofile");
 const {
   detailedViewOfIssue,
 } = require("../controllers/FetchIssue/DetailedViewOfIssue");
+const {
+  fetchClosedIssue,
+} = require("../controllers/FetchIssue/fetchclosedissue");
+const { closeIssue } = require("../controllers/CloseIssue/Closeissue");
+const {
+  fetchIssueHostelWise,
+} = require("../controllers/FetchIssue/superadmin/FetchAllIssueHostelWise");
+const {
+  FetchAllClosedIssueHostelWise,
+} = require("../controllers/FetchIssue/superadmin/AllClosedHostelWise");
 
 // get
 router.get("/", home.home);
 router.get("/fetchissues", fetchIssues);
 router.get("/getallaccounts", getAllAccounts);
+router.get("/fetchclosedissue", fetchClosedIssue);
 
 // post
 router.post("/createissue", issueReg);
 router.post("/signup", signup);
 router.post("/login", login);
 router.post("/detailedview", detailedViewOfIssue);
+router.post("/fetchissuehostelwise", fetchIssueHostelWise);
+router.post("/fetchallclosedissuehostelwise", FetchAllClosedIssueHostelWise);
 
 // put
 router.put("/forwardissue", forwardIssue);
@@ -41,6 +54,7 @@ router.put("/promotetodsw", roleToDsw);
 router.put("/promotetosupervisor", roleToSupervisor);
 router.put("/promotetowarden", roleToWarden);
 router.put("/editprofile", editPrfoile);
+router.put("/closeissue", closeIssue);
 
 //delete
 router.delete("/deleteaccount", deleteAccount);

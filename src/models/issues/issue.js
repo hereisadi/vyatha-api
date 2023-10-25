@@ -47,6 +47,10 @@ const IssueRegSchema = new mongoose.Schema({
   solvedAt: {
     type: String,
   },
+  isClosed: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const IssueRegModel = mongoose.model("IssueReg", IssueRegSchema);

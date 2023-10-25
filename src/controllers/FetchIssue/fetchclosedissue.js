@@ -2,14 +2,12 @@ const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
 
-// get request to fetch all the issues for student, warden, supervisor, dsw and superadmin
-
-// GET Registered issue
-// role: student, supervisor, warden, dsw, superadmin
+// GET TO FETCH CLOSED ISSUE
 // access: private
-// endpoint: /fetchissues
+// role: student, supervisor, warden, dsw, superadmin
+// endpoint: /fetchclosedissue
 
-const fetchIssues = async (req, res) => {
+const fetchClosedIssue = (req, res) => {
   verifyToken(req, res, async () => {
     try {
       const userId = req.user.userId;
@@ -27,7 +25,7 @@ const fetchIssues = async (req, res) => {
       if (user.role === "student") {
         const allIssues = await IssueRegModel.find({
           email: user.email,
-          isClosed: false,
+          isClosed: true,
         }).sort({
           IssueCreatedAt: -1, // sort from newest to oldest; +1 for oldest to newest
         });
@@ -35,13 +33,14 @@ const fetchIssues = async (req, res) => {
           success: true,
           allIssues,
         });
+      }
 
-        // for supervisor
-      } else if (user.role === "supervisor") {
+      // for supervisor
+      else if (user.role === "supervisor") {
         const issuesAssignedToSupervisor = await IssueRegModel.find({
           forwardedTo: "supervisor",
           hostel: user.hostel,
-          isClosed: false,
+          isClosed: true,
         }).sort({
           IssueForwardedAtToSupervisor: -1, // sort from newest to oldest; +1 for oldest to newest
         });
@@ -49,13 +48,14 @@ const fetchIssues = async (req, res) => {
           success: true,
           issuesAssignedToSupervisor,
         });
+      }
 
-        // for warden
-      } else if (user.role === "warden") {
+      // for warden
+      else if (user.role === "warden") {
         const issuesAssignedToWarden = await IssueRegModel.find({
           forwardedTo: "warden",
           hostel: user.hostel,
-          isClosed: false,
+          isClosed: true,
         }).sort({
           IssueForwardedAtToWarden: -1,
         });
@@ -65,12 +65,12 @@ const fetchIssues = async (req, res) => {
           issuesAssignedToWarden,
         });
 
-        // for dsw
+        //for dsw
       } else if (user.role === "dsw") {
         const issuesAssignedToDsw = await IssueRegModel.find({
           forwardedTo: "dsw",
           hostel: user.hostel,
-          isClosed: false,
+          isClosed: true,
         }).sort({
           IssueForwardedAtToDsw: -1,
         });
@@ -79,14 +79,13 @@ const fetchIssues = async (req, res) => {
           success: true,
           issuesAssignedToDsw,
         });
+      }
 
-        // for superadmin (vyatha team)
-      } else if (user.role === "superadmin") {
-        const AllRegissues = await IssueRegModel.find({ isClosed: false }).sort(
-          {
-            IssueCreatedAt: -1, // sort from newest to oldest; +1 for oldest to newest
-          }
-        );
+      // for superadmin
+      else if (user.role === "superadmin") {
+        const AllRegissues = await IssueRegModel.find({ isClosed: true }).sort({
+          IssueCreatedAt: -1, // sort from newest to oldest; +1 for oldest to newest
+        });
 
         res.status(200).json({
           sucess: true,
@@ -101,6 +100,7 @@ const fetchIssues = async (req, res) => {
     } catch (err) {
       console.error(err);
       res.status(500).json({
+        success: false,
         error: "Something went wrong on the server side",
       });
     }
@@ -108,5 +108,5 @@ const fetchIssues = async (req, res) => {
 };
 
 module.exports = {
-  fetchIssues,
+  fetchClosedIssue,
 };
