@@ -1,6 +1,7 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
+const moment = require("moment-timezone");
 
 // get request to fetch all the issues for student, warden, supervisor, dsw and superadmin
 
@@ -58,13 +59,27 @@ const fetchIssues = async (req, res) => {
           forwardedTo: "warden",
           hostel: user.hostel,
           isClosed: false,
-        }).sort({
-          IssueForwardedAtToWarden: -1,
+        });
+        // .sort({
+        //   IssueForwardedAtToWarden: +1,
+        // });
+
+        // EXPERIMENTAL MAY NOT WORK
+        const sortedIssues = issuesAssignedToWarden.sort((a, b) => {
+          // return new Date(b.IssueForwardedToWarden.time) - new Date(a.IssueForwardedToWarden.time);
+          const timeA = moment
+            .tz(a.IssueForwardedToWarden.time, "DD-MM-YY h:mma", "Asia/Kolkata")
+            .toDate();
+
+          const timeB = moment
+            .tz(b.IssueForwardedToWarden.time, "DD-MM-YY h:mma", "Asia/Kolkata")
+            .toDate();
+          return timeA - timeB;
         });
 
         res.status(200).json({
           success: true,
-          issuesAssignedToWarden,
+          sortedIssues,
         });
 
         // for dsw
@@ -73,20 +88,34 @@ const fetchIssues = async (req, res) => {
           forwardedTo: "dsw",
           hostel: user.hostel,
           isClosed: false,
-        }).sort({
-          IssueForwardedAtToDsw: -1,
+        });
+        // .sort({
+        //   IssueForwardedAtToDsw: +1,
+        // });
+
+        // EXPERIMENTAL MAY NOT WORK
+        const sortedIssues = issuesAssignedToDsw.sort((a, b) => {
+          // return new Date(b.IssueForwardedToWarden.time) - new Date(a.IssueForwardedToWarden.time);
+          const timeA = moment
+            .tz(a.IssueForwardedToDsw.time, "DD-MM-YY h:mma", "Asia/Kolkata")
+            .toDate();
+
+          const timeB = moment
+            .tz(b.IssueForwardedToDsw.time, "DD-MM-YY h:mma", "Asia/Kolkata")
+            .toDate();
+          return timeA - timeB;
         });
 
         res.status(200).json({
           success: true,
-          issuesAssignedToDsw,
+          sortedIssues,
         });
 
         // for superadmin (vyatha team)
       } else if (user.role === "superadmin") {
         const AllRegissues = await IssueRegModel.find({ isClosed: false }).sort(
           {
-            IssueCreatedAt: -1, // sort from newest to oldest; +1 for oldest to newest
+            IssueCreatedAt: +1, //  +1 for oldest to newest
           }
         );
 

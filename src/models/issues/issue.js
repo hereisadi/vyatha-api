@@ -35,12 +35,26 @@ const IssueRegSchema = new mongoose.Schema({
   IssueForwardedAtToSupervisor: {
     type: String,
   },
-  IssueForwardedAtToWarden: {
-    type: String,
-  },
-  IssueForwardedAtToDsw: {
-    type: String,
-  },
+  IssueForwardedToWarden: [
+    {
+      time: String,
+      reasonForForwarding: String,
+      isApproved: {
+        type: Boolean,
+        default: false,
+      },
+    },
+  ],
+  IssueForwardedToDsw: [
+    {
+      time: String,
+      reasonForForwarding: String,
+      isApproved: {
+        type: Boolean,
+        default: false,
+      },
+    },
+  ],
   isSolved: {
     // only supervisor can mark an issue as solved
     type: String,

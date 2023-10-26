@@ -6,10 +6,13 @@ const moment = require("moment-timezone");
 // put request
 
 // PUT forward issue
-// payload: issueID
+// payload: issueID, reasonForForwarding
 // role = supervisor, warden
 // access: private
 // endpoint: /forwardissue
+
+// client can easily issueID from the issue card.
+// client should make sure forward button is disabled if no message is entered in the reasonForForwarding field
 
 const forwardIssue = async (req, res) => {
   verifyToken(req, res, async () => {
@@ -25,20 +28,26 @@ const forwardIssue = async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      // for supervisor
-      if (user.role === "supervisor") {
-        const { issueID } = req.body; // client should send issueID as payload
-        const issue = await IssueRegModel.findById(issueID);
-        if (!issue) {
-          return res.status(401).json({
-            error: "No such issue exists",
-          });
-        }
+      // accessing payload
+      const { issueID } = req.body; // client should send issueID as payload
+      const { reasonForForwarding } = req.body; // client should send reasonForForwarding as payload
 
+      const issue = await IssueRegModel.findById(issueID);
+      if (!issue) {
+        return res.status(401).json({
+          error: "No such issue exists",
+        });
+      }
+
+      // for supervisor
+      if (user.role === "supervisor" && issue.hostel === user.hostel) {
         issue.forwardedTo = "warden";
-        issue.IssueForwardedAtToWarden = moment
-          .tz("Asia/Kolkata")
-          .format("DD-MM-YY h:mma");
+        const forwardDetails = {
+          time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          reasonForForwarding: reasonForForwarding,
+        };
+
+        issue.IssueForwardedToWarden.push(forwardDetails);
         await issue.save();
         res.status(200).json({
           success: true,
@@ -47,19 +56,14 @@ const forwardIssue = async (req, res) => {
       }
 
       // for warden
-      else if (user.role === "warden") {
-        const { issueID } = req.body; // client should send issueID as payload
-        const issue = await IssueRegModel.findById(issueID);
-        if (!issue) {
-          return res.status(401).json({
-            error: "No such issue exists",
-          });
-        }
-
+      else if (user.role === "warden" && user.hostel === issue.hostel) {
         issue.forwardedTo = "dsw";
-        issue.IssueForwardedAtToDsw = moment
-          .tz("Asia/Kolkata")
-          .format("DD-MM-YY h:mma");
+        const forwardDetails = {
+          time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          reasonForForwarding: reasonForForwarding,
+        };
+
+        issue.IssueForwardedToDsw.push(forwardDetails);
         await issue.save();
         res.status(200).json({
           success: true,

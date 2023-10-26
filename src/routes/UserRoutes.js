@@ -34,6 +34,7 @@ const {
 const { addComment } = require("../controllers/comments/addcomment");
 const { getComments } = require("../controllers/comments/getComments");
 const { editComment } = require("../controllers/comments/editComments");
+const { approveIssue } = require("../controllers/approveIssue/ApproveIssue");
 
 // get
 router.get("/", home.home);
@@ -62,6 +63,7 @@ router.put("/promotetowarden", roleToWarden);
 router.put("/editprofile", editPrfoile);
 router.put("/closeissue", closeIssue);
 router.put("/editcomment/:issueID/:commentID", editComment);
+router.put("/approveissue", approveIssue);
 
 //delete
 router.delete("/deleteaccount", deleteAccount);
