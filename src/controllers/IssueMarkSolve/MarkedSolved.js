@@ -2,6 +2,8 @@ const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
 const moment = require("moment-timezone");
+const { NotificationModel } = require("../../models/notification/notification");
+const uuid = require("uuidv4");
 
 // put request
 // PUT issue mark solved
@@ -37,6 +39,32 @@ const markedAsSolved = async (req, res) => {
           issue.isSolved = "true";
           issue.solvedAt = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
           await issue.save();
+
+          // student notification
+          const SnotificationId = uuid();
+          const studentNotification = await NotificationModel.findOne({
+            "student.id": SnotificationId,
+          });
+
+          if (studentNotification) {
+            studentNotification.message = "message updated";
+            await studentNotification.save();
+          } else {
+            const sNotification = new NotificationModel({
+              student: [
+                {
+                  id: issue._id,
+                  time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+                  message: `Issue has been Solved by the Supervisor of ${issue.hostel}`,
+                  isRead: false,
+                  issueTitle: issue.name,
+                  hostel: issue.hostel,
+                },
+              ],
+            });
+            await sNotification.save();
+          }
+
           res.status(200).json({
             success: true,
             message: "Issue marked as solved",

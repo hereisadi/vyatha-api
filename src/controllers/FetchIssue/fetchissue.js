@@ -2,6 +2,7 @@ const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
 const moment = require("moment-timezone");
+const { NotificationModel } = require("../../models/notification/notification");
 
 // get request to fetch all the issues for student, warden, supervisor, dsw and superadmin
 
@@ -30,11 +31,19 @@ const fetchIssues = async (req, res) => {
           email: user.email,
           isClosed: false,
         }).sort({
-          IssueCreatedAt: -1, // sort from newest to oldest; +1 for oldest to newest
+          IssueCreatedAt: 1, // sort oldest to newest
         });
+
+        const allNotifications = await NotificationModel.find({
+          "student.email": user.email,
+        }).sort({
+          time: 1,
+        });
+
         res.status(200).json({
           success: true,
           allIssues,
+          allNotifications,
         });
 
         // for supervisor
@@ -46,11 +55,19 @@ const fetchIssues = async (req, res) => {
           hostel: user.hostel,
           isClosed: false,
         }).sort({
-          IssueForwardedAtToSupervisor: -1, // sort from newest to oldest; +1 for oldest to newest
+          IssueForwardedAtToSupervisor: +1, //  +1 for oldest to newest
         });
+
+        const allNotifications = await NotificationModel.find({
+          "supervisor.hostel": user.hostel,
+        }).sort({
+          time: 1,
+        });
+
         res.status(200).json({
           success: true,
           issuesAssignedToSupervisor,
+          allNotifications,
         });
 
         // for warden
@@ -77,9 +94,16 @@ const fetchIssues = async (req, res) => {
           return timeA - timeB;
         });
 
+        const allNotifications = await NotificationModel.find({
+          "warden.hostel": user.hostel,
+        }).sort({
+          time: 1,
+        });
+
         res.status(200).json({
           success: true,
           sortedIssues,
+          allNotifications,
         });
 
         // for dsw
@@ -106,9 +130,16 @@ const fetchIssues = async (req, res) => {
           return timeA - timeB;
         });
 
+        const allNotifications = await NotificationModel.find({
+          "dsw.hostel": user.hostel,
+        }).sort({
+          time: 1,
+        });
+
         res.status(200).json({
           success: true,
           sortedIssues,
+          allNotifications,
         });
 
         // for superadmin (vyatha team)
