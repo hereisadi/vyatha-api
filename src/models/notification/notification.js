@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
-// const uniqueID = require("../../models/issues/issue")
+// const uniqueID = require("../../utils/uniqueid")
 
 const NotificationSchema = new mongoose.Schema({
-  // id:uniqueID,
+  otherID: {
+    type: String,
+  },
   dsw: [
     {
       id: String,

@@ -25,7 +25,13 @@ const approveIssue = (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      const { issueID } = req.body; //client should send issueID as payload
+      const { issueID, otherID } = req.body; //client should send issueID as payload
+
+      if (!otherID || !issueID) {
+        return res.status(400).json({
+          error: "payload missing",
+        });
+      }
 
       const issue = await IssueRegModel.findById(issueID);
       if (!issue) {
@@ -34,7 +40,16 @@ const approveIssue = (req, res) => {
         });
       }
 
-      // WARDEN
+      const notification = await NotificationModel.findOne({
+        otherID: otherID,
+      });
+      if (!notification) {
+        return res.status(401).json({
+          error: "No notification exists",
+        });
+      }
+
+      // WARDEN APPROVE
       if (
         user.role === "warden" &&
         issue.hostel === user.hostel &&
@@ -46,58 +61,29 @@ const approveIssue = (req, res) => {
         await issue.save();
 
         // saving notification for supervisor's dashboard
-        const notificationId = uuidv4();
-        const existingNotification = await NotificationModel.findOne({
-          "supervisor.id": notificationId,
-        });
-
-        // store as notification in NotificationModel and fetch it in the supervisor's dashboard
-        if (existingNotification) {
-          existingNotification.message = "message updated";
-          await existingNotification.save();
-        } else {
-          const notification = new NotificationModel({
-            supervisor: [
-              {
-                id: uuidv4(),
-                time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-                message: `Issue has been approved by the Warden of ${user.hostel}`,
-                isRead: false,
-                issueTitle: issue.name,
-                hostel: issue.hostel,
-              },
-            ],
-          });
-          await notification.save();
-        }
+        const supervisorNotification = {
+          id: uuidv4(),
+          time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          message: `Issue has been approved by the Warden of ${user.hostel}`,
+          isRead: false,
+          issueTitle: issue.name,
+          hostel: issue.hostel,
+        };
+        notification.supervisor.push(supervisorNotification);
+        await notification.save();
 
         // student notification
-        const SnotificationId = uuidv4();
-        const studentNotification = await NotificationModel.findOne({
-          "student.id": SnotificationId,
-        });
-
-        if (studentNotification) {
-          //
-          studentNotification.message = "message updated";
-          await studentNotification.save();
-        } else {
-          //
-          const sNotification = new NotificationModel({
-            student: [
-              {
-                id: issue._id,
-                time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-                message: `Issue has been approved by the Warden of ${user.hostel}`,
-                isRead: false,
-                issueTitle: issue.name,
-                hostel: issue.hostel,
-                email: issue.email,
-              },
-            ],
-          });
-          await sNotification.save();
-        }
+        const sNotification = {
+          id: uuidv4(),
+          time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          message: `Issue has been approved by the Warden of ${user.hostel}`,
+          isRead: false,
+          issueTitle: issue.name,
+          hostel: issue.hostel,
+          email: issue.email,
+        };
+        notification.student.push(sNotification);
+        await notification.save();
 
         res.status(200).json({
           success: true,
@@ -105,7 +91,7 @@ const approveIssue = (req, res) => {
         });
       }
 
-      //DSW
+      //DSW APPROVAL
       else if (
         user.role === "dsw" &&
         issue.hostel === user.hostel &&
@@ -117,56 +103,31 @@ const approveIssue = (req, res) => {
         await issue.save();
 
         // saving notification for warden's dashboard
-        const notificationId = uuidv4();
-        const existingNotification = await NotificationModel.findOne({
-          "warden.id": notificationId,
-        });
-
-        // store as notification in NotificationModel and fetch it in the warden's dashboard
-        if (existingNotification) {
-          existingNotification.message = "message updated";
-          await existingNotification.save();
-        } else {
-          const notification = new NotificationModel({
-            warden: [
-              {
-                id: uuidv4(),
-                time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-                message: `Issue has been approved by the DSW of ${user.hostel}`,
-                isRead: false,
-                issueTitle: issue.name,
-                hostel: issue.hostel,
-              },
-            ],
-          });
-          await notification.save();
-        }
+        const wNotification = {
+          id: uuidv4(),
+          time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          message: `Issue has been approved by the DSW of ${user.hostel}`,
+          isRead: false,
+          issueTitle: issue.name,
+          hostel: issue.hostel,
+        };
+        notification.warden.push(wNotification);
+        // saving notification for supervisor's dashboard
+        notification.supervisor.push(wNotification);
+        await notification.save();
 
         // student notification
-        const SnotificationId = uuidv4();
-        const studentNotification = await NotificationModel.findOne({
-          "student.id": SnotificationId,
-        });
-
-        if (studentNotification) {
-          studentNotification.message = "message updated";
-          await studentNotification.save();
-        } else {
-          const sNotification = new NotificationModel({
-            student: [
-              {
-                id: issue._id,
-                time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-                message: `Issue has been approved by the DSW of ${user.hostel}`,
-                isRead: false,
-                issueTitle: issue.name,
-                hostel: issue.hostel,
-                email: issue.email,
-              },
-            ],
-          });
-          await sNotification.save();
-        }
+        const sNotification = {
+          id: uuidv4(),
+          time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          message: `Your Issue has been approved by the DSW of ${user.hostel}`,
+          isRead: false,
+          issueTitle: issue.name,
+          hostel: issue.hostel,
+          email: issue.email,
+        };
+        notification.student.push(sNotification);
+        await notification.save();
 
         res.status(200).json({
           success: true,

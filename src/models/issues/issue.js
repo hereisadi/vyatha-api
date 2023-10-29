@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 // const moment = require("moment-timezone");
+// const uniqueID = require("../../utils/uniqueid")
 
 const IssueRegSchema = new mongoose.Schema({
+  otherID: String,
   name: {
     required: true,
     type: String,

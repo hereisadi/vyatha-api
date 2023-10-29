@@ -28,11 +28,25 @@ const markedAsSolved = async (req, res) => {
 
       // SUPERVISOR
       if (user.role === "supervisor") {
-        const { issueID } = req.body; // client should send issueID as payload
+        const { issueID, otherID } = req.body; // client should send issueID as payload
+        if (!issueID || !otherID) {
+          return res.status(400).json({
+            error: "payload missing",
+          });
+        }
         const issue = await IssueRegModel.findById(issueID);
         if (!issue) {
           return res.status(401).json({
             error: "No such issue exists",
+          });
+        }
+
+        const notification = await NotificationModel.findOne({
+          otherID: otherID,
+        });
+        if (!notification) {
+          return res.status(401).json({
+            error: "No notification exists",
           });
         }
 
@@ -43,29 +57,17 @@ const markedAsSolved = async (req, res) => {
             await issue.save();
 
             // student notification
-            const SnotificationId = uuidv4();
-            const studentNotification = await NotificationModel.findOne({
-              "student.id": SnotificationId,
-            });
+            const Snotification = {
+              id: uuidv4(),
+              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              message: `Issue has been Solved by the Supervisor of ${issue.hostel}`,
+              isRead: false,
+              issueTitle: issue.name,
+              hostel: issue.hostel,
+            };
 
-            if (studentNotification) {
-              studentNotification.message = "message updated";
-              await studentNotification.save();
-            } else {
-              const sNotification = new NotificationModel({
-                student: [
-                  {
-                    id: issue._id,
-                    time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-                    message: `Issue has been Solved by the Supervisor of ${issue.hostel}`,
-                    isRead: false,
-                    issueTitle: issue.name,
-                    hostel: issue.hostel,
-                  },
-                ],
-              });
-              await sNotification.save();
-            }
+            notification.student.push(Snotification);
+            await notification.save();
 
             res.status(200).json({
               success: true,

@@ -2,7 +2,8 @@ const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
 const moment = require("moment-timezone");
-
+const uniqueid = require("../../utils/uniqueid");
+const { NotificationModel } = require("../../models/notification/notification");
 // post request
 
 // POST issue registration
@@ -35,7 +36,6 @@ const issueReg = async (req, res) => {
             error: "Please provide description and photo",
           });
         }
-
         const issueRegistration = new IssueRegModel({
           name,
           email,
@@ -46,9 +46,16 @@ const issueReg = async (req, res) => {
           IssueForwardedAtToSupervisor: moment
             .tz("Asia/Kolkata")
             .format("DD-MM-YY h:mma"),
+          otherID: uniqueid.uniqueID,
         });
 
         await issueRegistration.save();
+
+        const notificationReg = new NotificationModel({
+          otherID: uniqueid.uniqueID,
+        });
+        await notificationReg.save();
+
         res.status(200).json({
           success: true,
           message: "Issue registered successfully",
