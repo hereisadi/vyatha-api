@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 // put request
 
 // PUT forward issue
-// payload: issueID, reasonForForwarding
+// payload: issueID, reasonForForwarding, otherID
 // role = supervisor, warden
 // access: private
 // endpoint: /forwardissue
@@ -31,9 +31,9 @@ const forwardIssue = async (req, res) => {
       }
 
       // accessing payload
-      const { issueID, reasonForForwarding } = req.body; // client should send issueID and reasonForForwarding as payload
+      const { issueID, reasonForForwarding, otherID } = req.body; // client should send issueID and reasonForForwarding as payload
 
-      if (!issueID || !reasonForForwarding) {
+      if (!issueID || !reasonForForwarding || !otherID) {
         return res.status(400).json({
           success: false,
           error: "body incomplete",
@@ -41,8 +41,15 @@ const forwardIssue = async (req, res) => {
       }
 
       const issue = await IssueRegModel.findById(issueID);
-      // const notification = NotificationModel.findOne({id: issueID});
+      const notification = await NotificationModel.findOne({
+        otherID: otherID,
+      });
 
+      if (!notification) {
+        return res.status(401).json({
+          error: "No notification exists",
+        });
+      }
       if (!issue) {
         return res.status(401).json({
           error: "No such issue exists",
@@ -61,17 +68,39 @@ const forwardIssue = async (req, res) => {
           issue.IssueForwardedToWarden.push(forwardDetails);
           await issue.save();
 
-          // saving notification for warden's dashboard
-          const notificationId = uuidv4();
-          const existingNotification = await NotificationModel.findOne({
-            "warden.id": notificationId,
+          // WARDEN NOTIFICATION
+          const notificationDetails = {
+            id: uuidv4(),
+            time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+            message: `New Issue has been forwarded to you by the supervisor of ${user.hostel}`,
+            isRead: false,
+            issueTitle: issue.name,
+            hostel: issue.hostel,
+          };
+          notification.warden.push(notificationDetails);
+          await notification.save();
+
+          // STUDENT NOTIFICATION
+          const SnotificationId = uuidv4();
+          const studentNotification = await NotificationModel.findOne({
+            "student.id": SnotificationId,
           });
 
-          if (existingNotification) {
-            existingNotification.message = "message updated";
-            await existingNotification.save();
+          if (studentNotification) {
+            studentNotification.message = "message updated";
+            await studentNotification.save();
           } else {
-            //
+            const SnotificationDetails = {
+              id: issue._id,
+              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              message: `Your Issue has been forwarded to the warden of ${user.hostel} by the Supervisor`,
+              isRead: false,
+              issueTitle: issue.name,
+              hostel: issue.hostel,
+              email: issue.email,
+            };
+            notification.student.push(SnotificationDetails);
+            await notification.save();
           }
         } else if (issue.forwardedTo === "warden") {
           return res.status(400).json({
@@ -85,77 +114,60 @@ const forwardIssue = async (req, res) => {
           });
         }
 
-        //  saving notification
-        const notificationId = uuidv4();
-
-        const existingNotification = await NotificationModel.findOne({
-          "warden.id": notificationId,
-        });
-
-        // store as notification in NotificationModel and fetch it in the warden's dashboard
-        if (existingNotification) {
-          existingNotification.message = "message updated";
-          await existingNotification.save();
-        } else {
-          const notification = NotificationModel({
-            warden: [
-              {
-                id: uuidv4(),
-                time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-                message: `New Issue has been forwarded to you by the supervisor of ${user.hostel}`,
-                isRead: false,
-                issueTitle: issue.name,
-                hostel: issue.hostel,
-              },
-            ],
-          });
-          await notification.save();
-        }
-
-        // student notification
-        const SnotificationId = uuidv4();
-        const studentNotification = await NotificationModel.findOne({
-          "student.id": SnotificationId,
-        });
-
-        if (studentNotification) {
-          studentNotification.message = "message updated";
-          await studentNotification.save();
-        } else {
-          const sNotification = NotificationModel({
-            student: [
-              {
-                id: issue._id,
-                time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-                message: `Issue has been forwarded to the warden of ${user.hostel} by the Supervisor`,
-                isRead: false,
-                issueTitle: issue.name,
-                hostel: issue.hostel,
-                email: issue.email,
-              },
-            ],
-          });
-          await sNotification.save();
-        }
-
         res.status(200).json({
           success: true,
           message: "Issue forwarded successfully and notification saved",
         });
       }
 
-      // for warden
+      // FOR WARDEN
       else if (user.role === "warden" && user.hostel === issue.hostel) {
         if (issue.forwardedTo === "warden") {
           issue.forwardedTo = "dsw";
 
-          // following may not work as it is under put request
           const forwardDetails = {
             time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
             reasonForForwarding: reasonForForwarding,
           };
           issue.IssueForwardedToDsw.push(forwardDetails);
           await issue.save();
+
+          // DSW NOTIFICATION
+          const newNotification = {
+            id: uuidv4(),
+            time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+            message: `New Issue has been forwarded to you by the warden of ${user.hostel}`,
+            isRead: false,
+            issueTitle: issue.name,
+            hostel: issue.hostel,
+          };
+          notification.dsw.push(newNotification);
+          await notification.save();
+
+          // SUPERVISOR NOTIFICATION
+          const newSupervisorNotification = {
+            id: uuidv4(),
+            time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+            message: `Issue has been forwarded to the DSW by the warden of ${user.hostel}`,
+            isRead: false,
+            issueTitle: issue.name,
+            hostel: issue.hostel,
+          };
+          notification.supervisor.push(newSupervisorNotification);
+          await notification.save();
+
+          // STUDENT NOTIFICATION
+          const sNotification = {
+            id: uuidv4(),
+            time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+            message: `Your Issue has been forwarded to the DSW of ${user.hostel} by the Warden`,
+            isRead: false,
+            issueTitle: issue.name,
+            hostel: issue.hostel,
+            email: issue.email,
+          };
+          notification.student.push(sNotification);
+          await notification.save();
         } else if (issue.forwardedTo === "dsw") {
           return res.status(400).json({
             success: false,
@@ -166,79 +178,6 @@ const forwardIssue = async (req, res) => {
             success: false,
             error: "Issue has not been forwarded to warden yet",
           });
-        }
-
-        // if (issue.IssueForwardedToDsw.reasonForForwarding === "") {
-
-        // } else {
-        //   return res.status(400).json({
-        //     error: "Already forwarded to DSW",
-        //   });
-        // }
-
-        // store as notification in NotificationModel and fetch it in the dsw's dashboard through the notification api
-
-        // const newNotification = {
-        //   id: uuidv4(),
-        //   time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-        //   message: `New Issue has been forwarded to you by the warden of ${user.hostel}`,
-        //   isRead: false,
-        //   issueTitle: issue.name,
-        // };
-        // await NotificationModel.dsw.push(newNotification);
-
-        //  saving notification for DSW's dashboard
-        const notificationId = uuidv4();
-        const existingNotification = await NotificationModel.findOne({
-          "dsw.id": notificationId,
-        });
-
-        // store as notification in NotificationModel and fetch it in the warden's dashboard
-        if (existingNotification) {
-          existingNotification.message = "message updated";
-          await existingNotification.save();
-        } else {
-          const notification = NotificationModel({
-            dsw: [
-              {
-                id: uuidv4(),
-                time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-                message: `New Issue has been forwarded to you by the warden of ${user.hostel}`,
-                isRead: false,
-                issueTitle: issue.name,
-                hostel: issue.hostel,
-              },
-            ],
-          });
-          await notification.save();
-        }
-
-        // student notification
-        const SnotificationId = uuidv4();
-        const studentNotification = await NotificationModel.findOne({
-          "student.id": SnotificationId,
-        });
-
-        if (studentNotification) {
-          //
-          studentNotification.message = "message updated";
-          await studentNotification.save();
-        } else {
-          //
-          const sNotification = NotificationModel({
-            student: [
-              {
-                id: issue._id,
-                time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-                message: `Issue has been forwarded to the DSW of ${user.hostel} by the Warden`,
-                isRead: false,
-                issueTitle: issue.name,
-                hostel: issue.hostel,
-                email: issue.email,
-              },
-            ],
-          });
-          await sNotification.save();
         }
 
         res.status(200).json({
