@@ -33,12 +33,19 @@ const closeIssue = async (req, res) => {
         }
 
         if (issue.email === user.email) {
-          issue.isClosed = true;
-          await issue.save();
-          res.status(200).json({
-            success: true,
-            message: "Issue closed successfully",
-          });
+          if (issue.isClosed === false) {
+            issue.isClosed = true;
+            await issue.save();
+            res.status(200).json({
+              success: true,
+              message: "Issue closed successfully",
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              error: "Issue already closed",
+            });
+          }
         } else {
           return res.status(400).json({
             success: false,

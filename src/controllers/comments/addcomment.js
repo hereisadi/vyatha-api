@@ -2,7 +2,7 @@ const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
 const moment = require("moment-timezone");
-const { uuid } = require("uuidv4");
+const { v4: uuidv4 } = require("uuid");
 
 // POST to add comment
 // role: all
@@ -55,7 +55,7 @@ const addComment = async (req, res) => {
           commentBody,
           createdAt: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
           authoremail: user.email,
-          commentId: uuid(),
+          commentId: uuidv4(),
         };
 
         issue.comments.push(newComment);

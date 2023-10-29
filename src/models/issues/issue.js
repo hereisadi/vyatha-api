@@ -57,8 +57,8 @@ const IssueRegSchema = new mongoose.Schema({
   ],
   isSolved: {
     // only supervisor can mark an issue as solved
-    type: String,
-    default: "false",
+    type: Boolean,
+    default: false,
   },
   solvedAt: {
     type: String,

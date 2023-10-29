@@ -3,7 +3,7 @@ const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
 const { NotificationModel } = require("../../models/notification/notification");
 const moment = require("moment-timezone");
-const uuid = require("uuidv4");
+const { v4: uuidv4 } = require("uuid");
 
 // PUT approve issue
 // role: warden, dsw
@@ -46,7 +46,7 @@ const approveIssue = (req, res) => {
         await issue.save();
 
         // saving notification for supervisor's dashboard
-        const notificationId = uuid();
+        const notificationId = uuidv4();
         const existingNotification = await NotificationModel.findOne({
           "supervisor.id": notificationId,
         });
@@ -59,7 +59,7 @@ const approveIssue = (req, res) => {
           const notification = new NotificationModel({
             supervisor: [
               {
-                id: uuid(),
+                id: uuidv4(),
                 time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
                 message: `Issue has been approved by the Warden of ${user.hostel}`,
                 isRead: false,
@@ -72,7 +72,7 @@ const approveIssue = (req, res) => {
         }
 
         // student notification
-        const SnotificationId = uuid();
+        const SnotificationId = uuidv4();
         const studentNotification = await NotificationModel.findOne({
           "student.id": SnotificationId,
         });
@@ -117,7 +117,7 @@ const approveIssue = (req, res) => {
         await issue.save();
 
         // saving notification for warden's dashboard
-        const notificationId = uuid();
+        const notificationId = uuidv4();
         const existingNotification = await NotificationModel.findOne({
           "warden.id": notificationId,
         });
@@ -130,7 +130,7 @@ const approveIssue = (req, res) => {
           const notification = new NotificationModel({
             warden: [
               {
-                id: uuid(),
+                id: uuidv4(),
                 time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
                 message: `Issue has been approved by the DSW of ${user.hostel}`,
                 isRead: false,
@@ -143,7 +143,7 @@ const approveIssue = (req, res) => {
         }
 
         // student notification
-        const SnotificationId = uuid();
+        const SnotificationId = uuidv4();
         const studentNotification = await NotificationModel.findOne({
           "student.id": SnotificationId,
         });

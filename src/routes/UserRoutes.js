@@ -37,7 +37,7 @@ const { editComment } = require("../controllers/comments/editComments");
 const { approveIssue } = require("../controllers/approveIssue/ApproveIssue");
 
 // get
-router.get("/", home.home);
+router.get("/", home.home); // tested
 router.get("/fetchissues", fetchIssues);
 router.get("/detailedview/:issueId", detailedViewOfIssue);
 router.get("/getallaccounts", getAllAccounts);
@@ -45,9 +45,9 @@ router.get("/fetchclosedissue", fetchClosedIssue);
 router.get("/getcomment/:issueID", getComments);
 
 // post
-router.post("/createissue", issueReg);
-router.post("/signup", signup);
-router.post("/login", login);
+router.post("/createissue", issueReg); //tested
+router.post("/signup", signup); //tested
+router.post("/login", login); // tested
 // router.post("/detailedview", detailedViewOfIssue);
 router.post("/fetchissuehostelwise", fetchIssueHostelWise);
 router.post("/fetchallclosedissuehostelwise", FetchAllClosedIssueHostelWise);
@@ -56,10 +56,10 @@ router.post("/addcomment/:issueID", addComment);
 // put
 router.put("/forwardissue", forwardIssue);
 router.put("/issuesolved", markedAsSolved);
-router.put("/demoterole", demoteRole);
-router.put("/promotetodsw", roleToDsw);
-router.put("/promotetosupervisor", roleToSupervisor);
-router.put("/promotetowarden", roleToWarden);
+router.put("/demoterole", demoteRole); //tested
+router.put("/promotetodsw", roleToDsw); //tested
+router.put("/promotetosupervisor", roleToSupervisor); //tested
+router.put("/promotetowarden", roleToWarden); //tested
 router.put("/editprofile", editPrfoile);
 router.put("/closeissue", closeIssue);
 router.put("/editcomment/:issueID/:commentID", editComment);

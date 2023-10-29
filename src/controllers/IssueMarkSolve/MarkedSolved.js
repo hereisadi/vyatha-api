@@ -3,7 +3,7 @@ const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
 const moment = require("moment-timezone");
 const { NotificationModel } = require("../../models/notification/notification");
-const uuid = require("uuidv4");
+const { v4: uuidv4 } = require("uuid");
 
 // put request
 // PUT issue mark solved
@@ -26,6 +26,7 @@ const markedAsSolved = async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
+      // SUPERVISOR
       if (user.role === "supervisor") {
         const { issueID } = req.body; // client should send issueID as payload
         const issue = await IssueRegModel.findById(issueID);
@@ -36,39 +37,46 @@ const markedAsSolved = async (req, res) => {
         }
 
         if (issue.hostel === user.hostel) {
-          issue.isSolved = "true";
-          issue.solvedAt = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
-          await issue.save();
+          if (issue.isSolved === false) {
+            issue.isSolved = true; // marked as solved
+            issue.solvedAt = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"); // save time
+            await issue.save();
 
-          // student notification
-          const SnotificationId = uuid();
-          const studentNotification = await NotificationModel.findOne({
-            "student.id": SnotificationId,
-          });
-
-          if (studentNotification) {
-            studentNotification.message = "message updated";
-            await studentNotification.save();
-          } else {
-            const sNotification = new NotificationModel({
-              student: [
-                {
-                  id: issue._id,
-                  time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-                  message: `Issue has been Solved by the Supervisor of ${issue.hostel}`,
-                  isRead: false,
-                  issueTitle: issue.name,
-                  hostel: issue.hostel,
-                },
-              ],
+            // student notification
+            const SnotificationId = uuidv4();
+            const studentNotification = await NotificationModel.findOne({
+              "student.id": SnotificationId,
             });
-            await sNotification.save();
-          }
 
-          res.status(200).json({
-            success: true,
-            message: "Issue marked as solved",
-          });
+            if (studentNotification) {
+              studentNotification.message = "message updated";
+              await studentNotification.save();
+            } else {
+              const sNotification = new NotificationModel({
+                student: [
+                  {
+                    id: issue._id,
+                    time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+                    message: `Issue has been Solved by the Supervisor of ${issue.hostel}`,
+                    isRead: false,
+                    issueTitle: issue.name,
+                    hostel: issue.hostel,
+                  },
+                ],
+              });
+              await sNotification.save();
+            }
+
+            res.status(200).json({
+              success: true,
+              message: "Issue marked as solved",
+            });
+          } else {
+            return res.status(400).json({
+              success: false,
+              error: "Issue already marked as solved",
+            });
+          }
         } else {
           return res.status(400).json({
             success: false,
@@ -78,7 +86,7 @@ const markedAsSolved = async (req, res) => {
       } else {
         return res.status(401).json({
           success: false,
-          error: "Only supervisor can mark an issue as soled",
+          error: "Only supervisor can mark an issue as solved",
         });
       }
     } catch (e) {

@@ -9,8 +9,8 @@ const moment = require("moment-timezone");
 
 const signup = async (req, res) => {
   try {
-    const { name, email, password, cpassword } = req.body; // client should name, email, password and cpassword as payload
-    if (!name || !email || !password || !cpassword) {
+    const { name, email, password, cpassword, hostel } = req.body; // client should name, email, password and cpassword as payload
+    if (!name || !email || !password || !cpassword || !hostel) {
       return res.status(400).json({ error: "Please fill all required fields" });
     }
 
@@ -41,6 +41,7 @@ const signup = async (req, res) => {
       name,
       password: hashPwd,
       accountCreatedAt: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+      hostel,
     });
 
     await user.save();
