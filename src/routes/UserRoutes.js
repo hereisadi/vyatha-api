@@ -35,6 +35,8 @@ const { addComment } = require("../controllers/comments/addcomment");
 const { getComments } = require("../controllers/comments/getComments");
 const { editComment } = require("../controllers/comments/editComments");
 const { approveIssue } = require("../controllers/approveIssue/ApproveIssue");
+const { sendotp } = require("../controllers/LocalAuth/sendotp");
+const { verifyOtp } = require("../controllers/LocalAuth/verifyotp");
 
 // get
 router.get("/", home.home); // tested
@@ -52,6 +54,8 @@ router.post("/login", login); // tested
 router.post("/fetchissuehostelwise", fetchIssueHostelWise);
 router.post("/fetchallclosedissuehostelwise", FetchAllClosedIssueHostelWise);
 router.post("/addcomment/:issueID", addComment);
+router.post("/sendotp", sendotp);
+router.post("/verifyotp", verifyOtp);
 
 // put
 router.put("/forwardissue", forwardIssue);
