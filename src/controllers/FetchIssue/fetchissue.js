@@ -34,16 +34,30 @@ const fetchIssues = async (req, res) => {
           IssueCreatedAt: 1, // sort oldest to newest
         });
 
-        const allNotifications = await NotificationModel.find({
-          "student.email": user.email,
-        }).sort({
-          time: 1,
+        const allNotifications = await NotificationModel.find({});
+
+        // console.log(typeof allNotifications);
+        // console.log(allNotifications);
+
+        const studentData = [];
+
+        for (const notification of allNotifications) {
+          if (notification.student && Array.isArray(notification.student)) {
+            studentData.push(...notification.student);
+          }
+        }
+        // console.log(studentData.length);
+
+        const filteredStudentNotifications = studentData.filter((student) => {
+          return student.email === user.email;
         });
+
+        // console.log(filteredStudentData);
 
         res.status(200).json({
           success: true,
           allIssues,
-          allNotifications,
+          filteredStudentNotifications,
         });
 
         // for supervisor
@@ -58,16 +72,35 @@ const fetchIssues = async (req, res) => {
           IssueForwardedAtToSupervisor: +1, //  +1 for oldest to newest
         });
 
-        const allNotifications = await NotificationModel.find({
-          "supervisor.hostel": user.hostel,
-        }).sort({
+        const allNotifications = await NotificationModel.find({}).sort({
           time: 1,
         });
+
+        const superVisorData = [];
+
+        for (const notification of allNotifications) {
+          if (
+            notification.supervisor &&
+            Array.isArray(notification.supervisor)
+          ) {
+            superVisorData.push(...notification.supervisor);
+          }
+        }
+        // console.log(superVisorData.length);
+
+        const filteredSupervisorNotifications = superVisorData.filter(
+          (supervisor) => {
+            return supervisor.hostel === user.hostel;
+          }
+        );
+
+        // console.log(filteredSupervisorNotifications);
+        // console.log(filteredSupervisorNotifications.length);
 
         res.status(200).json({
           success: true,
           issuesAssignedToSupervisor,
-          allNotifications,
+          filteredSupervisorNotifications,
         });
 
         // for warden
@@ -94,16 +127,30 @@ const fetchIssues = async (req, res) => {
           return timeA - timeB;
         });
 
-        const allNotifications = await NotificationModel.find({
-          "warden.hostel": user.hostel,
-        }).sort({
+        // FETCHING NOTIFICATIONS FOR WARDEN
+        const allNotifications = await NotificationModel.find({}).sort({
           time: 1,
         });
+
+        const wardenData = [];
+
+        for (const notification of allNotifications) {
+          if (notification.warden && Array.isArray(notification.warden)) {
+            wardenData.push(...notification.warden);
+          }
+        }
+        // console.log(wardenData.length);
+
+        const filteredWardenNotifications = wardenData.filter((warden) => {
+          return warden.hostel === user.hostel;
+        });
+
+        // console.log(filteredWardenNotifications.length);
 
         res.status(200).json({
           success: true,
           sortedIssues,
-          allNotifications,
+          filteredWardenNotifications,
         });
 
         // for dsw
@@ -130,16 +177,28 @@ const fetchIssues = async (req, res) => {
           return timeA - timeB;
         });
 
-        const allNotifications = await NotificationModel.find({
-          "dsw.hostel": user.hostel,
-        }).sort({
+        // FETCHING NOTIFICATIONS FOR DSW
+        const allNotifications = await NotificationModel.find({}).sort({
           time: 1,
+        });
+
+        const dswData = [];
+
+        for (const notification of allNotifications) {
+          if (notification.dsw && Array.isArray(notification.dsw)) {
+            dswData.push(...notification.dsw);
+          }
+        }
+        // console.log(dswData.length);
+
+        const filteredDswNotifications = dswData.filter((dsw) => {
+          return dsw.hostel === user.hostel;
         });
 
         res.status(200).json({
           success: true,
           sortedIssues,
-          allNotifications,
+          filteredDswNotifications,
         });
 
         // for superadmin (vyatha team)
