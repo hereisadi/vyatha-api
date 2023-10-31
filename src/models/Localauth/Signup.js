@@ -43,6 +43,10 @@ const SignUpSchema = new mongoose.Schema({
     type: String,
     default: undefined,
   },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const SignUpModel = mongoose.model("UserSignup", SignUpSchema);

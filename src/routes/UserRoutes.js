@@ -39,6 +39,12 @@ const { sendotp } = require("../controllers/LocalAuth/sendotp");
 const { verifyOtp } = require("../controllers/LocalAuth/verifyotp");
 const { forgotPwd } = require("../controllers/LocalAuth/forgotpwd");
 const { resetPassword } = require("../controllers/LocalAuth/resetpassword");
+const {
+  verifyMagicLink,
+} = require("../controllers/LocalAuth/verifyemail/verifymagiclink");
+const {
+  sendMagicLink,
+} = require("../controllers/LocalAuth/verifyemail/sendmagiclink");
 
 // get
 router.get("/", home.home); // tested
@@ -60,6 +66,7 @@ router.post("/sendotp", sendotp);
 router.post("/verifyotp", verifyOtp);
 router.post("/forgotpassword", forgotPwd);
 router.post("/resetpassword/:token", resetPassword);
+router.post("/sendmagiclink", sendMagicLink);
 
 // put
 router.put("/forwardissue", forwardIssue);
@@ -72,6 +79,7 @@ router.put("/editprofile", editPrfoile);
 router.put("/closeissue", closeIssue);
 router.put("/editcomment/:issueID/:commentID", editComment);
 router.put("/approveissue", approveIssue);
+router.put("/verifyemail/:token", verifyMagicLink);
 
 //delete
 router.delete("/deleteaccount", deleteAccount);

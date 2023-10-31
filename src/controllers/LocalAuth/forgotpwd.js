@@ -10,6 +10,8 @@ const moment = require("moment-timezone");
 // payload: email
 // endpoint: /forgotpassword
 
+// alternatively to send otp for verifying the email, we can use the magic link approach. after signup, their verified status will be false. when they click to send the link to verify their email address, a magic link will be send to their email address, if token matches then their status will be turned to true. they will be able to file an issue, only when isVerified is true.
+
 const forgotPwd = async (req, res) => {
   emailValidator(req, res, async () => {
     try {
