@@ -45,6 +45,10 @@ const sendMagicLink = async (req, res) => {
         "[Vyatha] Verify Email",
         `Click on this link to verify your email: ${verifyEmailLink} \n Link is valid for 60 minutes \n\n Team Vyatha`
       );
+      return res.status(200).json({
+        success: true,
+        message: "magic link sent successfully",
+      });
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Internal Server Error" });
