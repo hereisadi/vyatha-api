@@ -37,6 +37,8 @@ const { editComment } = require("../controllers/comments/editComments");
 const { approveIssue } = require("../controllers/approveIssue/ApproveIssue");
 const { sendotp } = require("../controllers/LocalAuth/sendotp");
 const { verifyOtp } = require("../controllers/LocalAuth/verifyotp");
+const { forgotPwd } = require("../controllers/LocalAuth/forgotpwd");
+const { resetPassword } = require("../controllers/LocalAuth/resetpassword");
 
 // get
 router.get("/", home.home); // tested
@@ -56,6 +58,8 @@ router.post("/fetchallclosedissuehostelwise", FetchAllClosedIssueHostelWise);
 router.post("/addcomment/:issueID", addComment);
 router.post("/sendotp", sendotp);
 router.post("/verifyotp", verifyOtp);
+router.post("/forgotpassword", forgotPwd);
+router.post("/resetpassword/:token", resetPassword);
 
 // put
 router.put("/forwardissue", forwardIssue);

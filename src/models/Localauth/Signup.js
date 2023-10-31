@@ -35,6 +35,14 @@ const SignUpSchema = new mongoose.Schema({
   roleDemotedAt: {
     type: String,
   },
+  resetToken: {
+    type: String,
+    default: undefined,
+  },
+  tokenExpiration: {
+    type: String,
+    default: undefined,
+  },
 });
 
 const SignUpModel = mongoose.model("UserSignup", SignUpSchema);
