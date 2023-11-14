@@ -2,7 +2,7 @@ const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
 
-// POST detailed view of issue
+// GET detailed view of issue
 // payload: issueId
 // role: student, supervisor, warden, dsw, superadmin
 // access: private
