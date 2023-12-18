@@ -31,7 +31,7 @@ const forwardIssue = async (req, res) => {
       }
 
       // accessing payload
-      const { issueID, reasonForForwarding, otherID } = req.body; // client should send issueID and reasonForForwarding as payload
+      const { issueID, reasonForForwarding, otherID } = req.body; // client should send issueID, reasonForForwarding and otherID as payload
 
       if (!issueID || !reasonForForwarding || !otherID) {
         return res.status(400).json({
@@ -168,6 +168,11 @@ const forwardIssue = async (req, res) => {
           };
           notification.student.push(sNotification);
           await notification.save();
+
+          res.status(200).json({
+            success: true,
+            message: "Issue forwarded successfully and notification saved",
+          });
         } else if (issue.forwardedTo === "dsw") {
           return res.status(400).json({
             success: false,

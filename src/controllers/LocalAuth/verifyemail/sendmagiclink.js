@@ -24,6 +24,10 @@ const sendMagicLink = async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
+      if (user.isVerified === true) {
+        return res.status(400).json({ message: "Email already verified" });
+      }
+
       const Email = user.email.toString().trim();
 
       const token = crypto.randomBytes(32).toString("hex");
@@ -43,7 +47,7 @@ const sendMagicLink = async (req, res) => {
       sendEmail(
         Email,
         "[Vyatha] Verify Email",
-        `Click on this link to verify your email: ${verifyEmailLink} \n Link is valid for 60 minutes \n\n Team Vyatha`
+        `Hi ${user.name},\n We are glad to have you on the board. Please Click on this link to verify your email: ${verifyEmailLink} \n Link is valid for 60 minutes \n\n Team Vyatha`
       );
       return res.status(200).json({
         success: true,

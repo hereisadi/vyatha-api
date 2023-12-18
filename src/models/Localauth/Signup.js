@@ -9,6 +9,14 @@ const SignUpSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  phone: {
+    required: true,
+    type: String,
+  },
+  scholarID: {
+    required: true,
+    type: String,
+  },
   profilepic: {
     type: String,
     default:
@@ -19,6 +27,10 @@ const SignUpSchema = new mongoose.Schema({
     type: String,
   },
   hostel: {
+    required: true,
+    type: String,
+  },
+  room: {
     required: true,
     type: String,
   },
@@ -46,6 +58,10 @@ const SignUpSchema = new mongoose.Schema({
   isVerified: {
     type: Boolean,
     default: false,
+  },
+  deleteAccount: {
+    type: String,
+    default: "no",
   },
 });
 

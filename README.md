@@ -323,9 +323,33 @@ payload:accountID
 
 ```
 
+- Check if account exists or not
+```
+Method: GET
+Type: Public
+role: all
+Route:
+/vyatha/api/accountexists/:email
+params: email
+payload: none
+
+```
+
+- Student can delete their account
+```
+Method: PUT
+Type: private
+role: student
+Route:
+/vyatha/api/studentdeleteaccount
+params: none
+payload: none
+
+```
+
 -
 ## Deployment
-To deploy on Render, create an account and set up environment variables. Then run ``pnpm i`` under build command and ``pnpm dev`` under start command.
+To deploy on Render, create an account and set up environment variables. Then provide ``pnpm i`` under build command and ``pnpm dev`` under start command.
 
 
 ## Contributing

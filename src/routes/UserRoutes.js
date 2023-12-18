@@ -45,6 +45,10 @@ const {
 const {
   sendMagicLink,
 } = require("../controllers/LocalAuth/verifyemail/sendmagiclink");
+const { accountExists } = require("../controllers/accountexists/AccountExists");
+const {
+  studentDeleteAccount,
+} = require("../controllers/studentDeleteAccount/StudentDeleteAccount");
 
 // get
 router.get("/", home.home); // tested
@@ -53,6 +57,7 @@ router.get("/detailedview/:issueId", detailedViewOfIssue);
 router.get("/getallaccounts", getAllAccounts);
 router.get("/fetchclosedissue", fetchClosedIssue);
 router.get("/getcomment/:issueID", getComments);
+router.get("/accountexists/:email", accountExists);
 
 // post
 router.post("/createissue", issueReg); //tested
@@ -80,6 +85,7 @@ router.put("/closeissue", closeIssue);
 router.put("/editcomment/:issueID/:commentID", editComment);
 router.put("/approveissue", approveIssue);
 router.put("/verifyemail/:token", verifyMagicLink);
+router.put("/studentdeleteaccount", studentDeleteAccount);
 
 //delete
 router.delete("/deleteaccount", deleteAccount);

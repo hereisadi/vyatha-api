@@ -12,6 +12,10 @@ const IssueRegSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  scholarID: {
+    required: true,
+    type: String,
+  },
   description: {
     required: true,
     type: String,
@@ -20,7 +24,15 @@ const IssueRegSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  category: {
+    required: true,
+    type: String,
+  },
   hostel: {
+    required: true,
+    type: String,
+  },
+  room: {
     required: true,
     type: String,
   },

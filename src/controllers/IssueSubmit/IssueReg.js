@@ -25,8 +25,9 @@ const issueReg = async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      const { role, name, email, hostel, isVerified } = user;
+      const { role, name, email, hostel, isVerified, room, scholarID } = user;
 
+      const randomGeneratedID = uniqueid.uniqueID;
       // only student can file an issue
       if (role === "student") {
         if (isVerified === false) {
@@ -35,30 +36,37 @@ const issueReg = async (req, res) => {
             error: "You must verify your email to submit an issue",
           });
         } else {
-          const { description, photo } = req.body; // client should send description and photo as payload
+          const { photo } = req.body;
+          let { description, category } = req.body; // client should send description, photo and category as payload
 
-          if (!description || !photo) {
+          if (!description || !photo || !category) {
             return res.status(401).json({
               error: "Please provide description and photo",
             });
           }
+
+          description = description?.toString().trim();
+          category = category?.toString().trim();
+
           const issueRegistration = new IssueRegModel({
             name,
             email,
             description,
             photo,
             hostel,
+            room,
+            scholarID,
             IssueCreatedAt: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
             IssueForwardedAtToSupervisor: moment
               .tz("Asia/Kolkata")
               .format("DD-MM-YY h:mma"),
-            otherID: uniqueid.uniqueID,
+            otherID: randomGeneratedID,
           });
 
           await issueRegistration.save();
 
           const notificationReg = new NotificationModel({
-            otherID: uniqueid.uniqueID,
+            otherID: randomGeneratedID,
           });
           await notificationReg.save();
 

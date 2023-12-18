@@ -1,6 +1,7 @@
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const moment = require("moment-timezone");
 const bcrypt = require("bcrypt");
+const { sendEmail } = require("../../utils/EmailService");
 
 // POST req to reset the password
 // access: public
@@ -15,13 +16,20 @@ const bcrypt = require("bcrypt");
 const resetPassword = async (req, res) => {
   try {
     const { password, confirmPassword } = req.body;
-    const { token } = req.params;
-
-    const trimPassword = password.trim();
-    const trimCPassword = confirmPassword.trim();
+    let { token } = req.params;
 
     if (!trimPassword || !trimCPassword || !token) {
       return res.status(400).json({ message: "Payload missing" });
+    }
+
+    const trimPassword = password?.toString().trim();
+    const trimCPassword = confirmPassword?.toString().trim();
+    token = token?.toString().trim();
+
+    if (trimPassword !== "" && trimPassword.length < 8) {
+      return res.status(400).json({
+        message: "Password must be atleast 8 characters long",
+      });
     }
 
     if (trimPassword !== trimCPassword) {
@@ -45,6 +53,12 @@ const resetPassword = async (req, res) => {
       user.resetToken = undefined;
       user.tokenExpiration = undefined;
       await user.save();
+      // send the email to user that password has been reset
+      sendEmail(
+        user.email,
+        "[Vyatha] Password has been reset",
+        `Hi ${user.name},\nIt's just to inform you that your password has been reset successfully. If you do not recognize this activity, please contact Vyatha team immediately.\n\n Team Vyatha`
+      );
       return res.status(200).json({ message: "Password reset successfully" });
     }
   } catch (err) {

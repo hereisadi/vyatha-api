@@ -19,7 +19,7 @@ const forgotPwd = async (req, res) => {
       if (!email) {
         return res.status(400).json({ message: "Email is required" });
       }
-      const Email = email.toString().trim();
+      const Email = email?.toLowerCase().toString().trim();
 
       const user = await SignUpModel.findOne({ email: Email });
       if (!user) {
@@ -47,7 +47,7 @@ const forgotPwd = async (req, res) => {
       sendEmail(
         Email,
         "[Vyatha] Reset Password",
-        `Click on this link to reset your password: ${resetLink} \n Link is valid for 60 minutes \n\n Team Vyatha`
+        `Hi ${user.name},\n We have received an request to reset your password. If this is really you, please click on the below link to set new password: \n\n ${resetLink} \n Link is valid for 60 minutes.\n\n DO NOT SHARE WITH ANYONE \n\n Team Vyatha`
       );
 
       res.status(200).json({

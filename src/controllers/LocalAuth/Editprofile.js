@@ -9,6 +9,8 @@ const bcrypt = require("bcrypt");
 // access : private
 // endpoint: /editprofile
 
+// student can edit their name, password, hostel number, room number and phone number
+
 const editPrfoile = (req, res) => {
   verifyToken(req, res, async () => {
     try {
@@ -23,15 +25,30 @@ const editPrfoile = (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      const { name, newpwd, cnewpwd } = req.body;
+      let { name, newpwd, cnewpwd, phone, room, hostel } = req.body;
 
-      if (!name && !newpwd && !cnewpwd) {
-        return res.status(400).json({ error: "one field must be filled" });
+      if (!name && !newpwd && !cnewpwd && !phone && !room && !hostel) {
+        return res
+          .status(400)
+          .json({ error: "atleast one field must be filled" });
       }
+
+      name = name?.toString().trim();
+      newpwd = newpwd?.toString().trim();
+      cnewpwd = cnewpwd?.toString().trim();
+      phone = phone?.toString().trim();
+      room = room?.toString().trim();
+      hostel = hostel?.toString().trim();
 
       if (newpwd !== "" && newpwd !== cnewpwd) {
         return res.status(400).json({
           error: "new password and confirm new password must be same",
+        });
+      }
+
+      if (newpwd.length < 8) {
+        return res.status(400).json({
+          error: "password must be atleast 8 characters long",
         });
       }
 
@@ -43,6 +60,18 @@ const editPrfoile = (req, res) => {
 
       if (newpwd) {
         user.password = newHashedPwd;
+      }
+
+      if (phone) {
+        user.phone = phone;
+      }
+
+      if (room) {
+        user.room = room;
+      }
+
+      if (hostel) {
+        user.hostel = hostel;
       }
 
       await user.save();

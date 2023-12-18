@@ -2,7 +2,7 @@ const { SignUpModel } = require("../../models/Localauth/Signup");
 const bcrypt = require("bcrypt");
 const moment = require("moment-timezone");
 const emailValidator = require("../../utils/EmailValidation");
-const { verifyOTP } = require("../../middlewares/verifyotp");
+// const { verifyOTP } = require("../../middlewares/verifyotp");
 
 // const verifyOTP = require("../../middlewares/verifyotp");
 // POST account signup
@@ -14,12 +14,19 @@ const { verifyOTP } = require("../../middlewares/verifyotp");
 const signup = async (req, res) => {
   emailValidator(req, res, async () => {
     try {
-      const { name, email, password, cpassword, hostel } = req.body; // client should name, email, password and cpassword as payload
-      if (!name || !email || !password || !cpassword || !hostel) {
+      let { name, email, password, cpassword, hostel, scholarID } = req.body; // client should name, email, password and cpassword as payload
+      if (!name || !email || !password || !cpassword || !hostel || !scholarID) {
         return res
           .status(400)
           .json({ error: "Please fill all required fields" });
       }
+
+      name = name?.toString().trim();
+      email = email?.toLowerCase().toString().trim();
+      password = password?.toString().trim();
+      cpassword = cpassword?.toString().trim();
+      hostel = hostel?.toString().trim();
+      scholarID = scholarID?.toString().trim();
 
       if (password.length < 8) {
         return res
@@ -49,15 +56,17 @@ const signup = async (req, res) => {
         password: hashPwd,
         accountCreatedAt: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
         hostel,
+        scholarID,
       });
 
-      verifyOTP(req, res, async () => {
-        await user.save();
-        res.status(200).json({
-          success: true,
-          message: "Signup successfully completed",
-        });
+      await user.save();
+      res.status(200).json({
+        success: true,
+        message: "Signup successfully completed",
       });
+      // verifyOTP(req, res, async () => {
+
+      // });
     } catch (err) {
       console.error(err);
       res.status(500).json({

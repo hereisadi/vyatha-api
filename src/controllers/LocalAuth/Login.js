@@ -12,17 +12,29 @@ require("dotenv").config();
 
 const login = async (req, res) => {
   emailValidator(req, res, async () => {
-    const { email, password } = req.body; // client should email and password as payload
+    let { email, password } = req.body; // client should send email and password as payload
+    if (!email || !password) {
+      return res.status(400).json({ error: "Please fill all required fields" });
+    }
+
+    email = email?.toLowerCase().toString().trim();
+    password = password?.toString().trim();
 
     try {
       const user = await SignUpModel.findOne({ email });
       if (!user) {
-        return res.status(401).json({ error: "Invalid email or password" });
+        return res.status(401).json({ error: "no user found" });
+      }
+
+      if (user.deleteAccount === "scheduled") {
+        return res
+          .status(401)
+          .json({ error: "Account scheduled for deletion" });
       }
 
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
-        return res.status(401).json({ error: "Invalid email or password" });
+        return res.status(401).json({ error: "wrong email or password" });
       }
 
       // accept token as cookies in frontend instead of localstorage

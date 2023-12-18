@@ -9,10 +9,12 @@ const moment = require("moment-timezone");
 
 const verifyMagicLink = async (req, res) => {
   try {
-    const token = req.params.token;
+    let token = req.params.token;
     if (!token) {
       return res.status(400).json({ message: "Token missing" });
     }
+
+    token = token?.toString().trim();
 
     const user = await SignUpModel.findOne({
       resetToken: token,
@@ -20,6 +22,10 @@ const verifyMagicLink = async (req, res) => {
 
     if (!user) {
       return res.status(400).json({ message: "no user exists" });
+    }
+
+    if (user.isVerified === true) {
+      return res.status(400).json({ error: "Email already verified" });
     }
 
     const tokenExpiration = user.tokenExpiration;

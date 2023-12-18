@@ -30,7 +30,7 @@ const fetchIssueHostelWise = async (req, res) => {
           hostel: hostel,
           isClosed: false,
         }).sort({
-          IssueCreatedAt: -1, // sort from newest to oldest; +1 for oldest to newest
+          IssueCreatedAt: +1, // sort from newest to oldest; +1 for oldest to newest
         });
         res.status(200).json({
           success: true,

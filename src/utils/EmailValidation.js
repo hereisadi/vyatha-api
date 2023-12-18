@@ -1,7 +1,11 @@
 const errors = require("../utils/error/error");
 
 const emailValidator = (req, res, next) => {
-  const { email } = req.body;
+  let { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: "email is missing" });
+  }
+  email = email?.toLowerCase().toString().trim();
   const emailValidatorRegex = RegExp(
     /^[a-zA-Z0-9._-]+@([a-z]+\.)?nits\.ac\.in$/
   );

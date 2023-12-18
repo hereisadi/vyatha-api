@@ -36,6 +36,7 @@ const addComment = async (req, res) => {
         // user.role === "warden" ||
         // user.role === "dsw" ||
 
+        // in the below logic if an issue has been forwarded to warden, then supervisor can't add comment
         (user.role === issue.forwardedTo && user.hostel === issue.hostel) || // for those who have been assigned the issue
         user.role === "superadmin"
 
