@@ -11,11 +11,22 @@ const emailValidator = require("../../utils/EmailValidation");
 // endpoint: /signup
 // middleware: emailValidator and verifyOTP
 
+// ? designations: Student, Warden, Supervisor, Dean
+
 const signup = async (req, res) => {
   emailValidator(req, res, async () => {
     try {
-      let { name, email, password, cpassword, hostel, scholarID } = req.body; // client should name, email, password and cpassword as payload
-      if (!name || !email || !password || !cpassword || !hostel || !scholarID) {
+      let { name, email, password, cpassword, hostel, designation, phone } =
+        req.body; // client should name, email, password, cpassword, hostel and designation as payload
+      if (
+        !name ||
+        !email ||
+        !password ||
+        !cpassword ||
+        !hostel ||
+        !designation ||
+        !phone
+      ) {
         return res
           .status(400)
           .json({ error: "Please fill all required fields" });
@@ -26,7 +37,8 @@ const signup = async (req, res) => {
       password = password?.toString().trim();
       cpassword = cpassword?.toString().trim();
       hostel = hostel?.toString().trim();
-      scholarID = scholarID?.toString().trim();
+      designation = designation?.toString().trim();
+      phone = phone?.toString().trim();
 
       if (password.length < 8) {
         return res
@@ -50,23 +62,53 @@ const signup = async (req, res) => {
 
       const hashPwd = await bcrypt.hash(password, 10);
 
-      const user = new SignUpModel({
-        email,
-        name,
-        password: hashPwd,
-        accountCreatedAt: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-        hostel,
-        scholarID,
-      });
+      if (designation === "Student") {
+        let scholarID,
+          room = req.body;
+        if (!scholarID || !room) {
+          return res.status(400).json({ error: "missing scholarID" });
+        }
+        scholarID = scholarID?.toString().trim();
+        room = room?.toString().trim();
 
-      await user.save();
-      res.status(200).json({
-        success: true,
-        message: "Signup successfully completed",
-      });
-      // verifyOTP(req, res, async () => {
+        const user = new SignUpModel({
+          email,
+          name,
+          password: hashPwd,
+          accountCreatedAt: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          hostel,
+          scholarID,
+          phone,
+          room,
+          designation,
+        });
 
-      // });
+        await user.save();
+        res.status(200).json({
+          success: true,
+          message: "Signup successfully completed",
+        });
+      } else if (
+        designation === "Warden" ||
+        designation === "Supervisor" ||
+        designation === "Dean"
+      ) {
+        const user = new SignUpModel({
+          email,
+          name,
+          password: hashPwd,
+          accountCreatedAt: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          hostel,
+          phone,
+          designation,
+        });
+
+        await user.save();
+        res.status(200).json({
+          success: true,
+          message: "Signup successfully completed",
+        });
+      }
     } catch (err) {
       console.error(err);
       res.status(500).json({

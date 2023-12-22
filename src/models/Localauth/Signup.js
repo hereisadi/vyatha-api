@@ -14,7 +14,7 @@ const SignUpSchema = new mongoose.Schema({
     type: String,
   },
   scholarID: {
-    required: true,
+    // for student only
     type: String,
   },
   profilepic: {
@@ -31,11 +31,15 @@ const SignUpSchema = new mongoose.Schema({
     type: String,
   },
   room: {
-    required: true,
+    // for student only
     type: String,
   },
   role: {
     default: "student",
+    type: String,
+  },
+  designation: {
+    required: true,
     type: String,
   },
   accountCreatedAt: {

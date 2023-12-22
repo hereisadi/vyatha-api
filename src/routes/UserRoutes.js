@@ -49,9 +49,11 @@ const { accountExists } = require("../controllers/accountexists/AccountExists");
 const {
   studentDeleteAccount,
 } = require("../controllers/studentDeleteAccount/StudentDeleteAccount");
+const { dashboard } = require("../controllers/Dashboard/Dashboard");
 
 // get
 router.get("/", home.home); // tested
+router.get("/dashboard", dashboard);
 router.get("/fetchissues", fetchIssues);
 router.get("/detailedview/:issueId", detailedViewOfIssue);
 router.get("/getallaccounts", getAllAccounts);
