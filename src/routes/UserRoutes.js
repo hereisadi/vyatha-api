@@ -50,6 +50,7 @@ const {
   studentDeleteAccount,
 } = require("../controllers/studentDeleteAccount/StudentDeleteAccount");
 const { dashboard } = require("../controllers/Dashboard/Dashboard");
+const { raiseComplain } = require("../controllers/RaiseComplain/RaiseComplain");
 
 // get
 router.get("/", home.home); // tested
@@ -84,6 +85,7 @@ router.put("/promotetosupervisor", roleToSupervisor); //tested
 router.put("/promotetowarden", roleToWarden); //tested
 router.put("/editprofile", editPrfoile);
 router.put("/closeissue", closeIssue);
+router.put("/raisecomplain", raiseComplain);
 router.put("/editcomment/:issueID/:commentID", editComment);
 router.put("/approveissue", approveIssue);
 router.put("/verifyemail/:token", verifyMagicLink);

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-// const moment = require("moment-timezone");
+const moment = require("moment-timezone");
 // const uniqueID = require("../../utils/uniqueid")
 
 const IssueRegSchema = new mongoose.Schema({
@@ -13,6 +13,10 @@ const IssueRegSchema = new mongoose.Schema({
     type: String,
   },
   scholarID: {
+    required: true,
+    type: String,
+  },
+  title: {
     required: true,
     type: String,
   },
@@ -40,6 +44,19 @@ const IssueRegSchema = new mongoose.Schema({
     type: String,
     default: "supervisor",
   },
+  // student can raise their complain to the warden after 7 days of raising the issue, if there is no response from the supervisor's side, before 7 days, the student can't raise their complain to the warden and so on
+  raiseComplainTo: [
+    {
+      whom: {
+        type: String,
+        default: "supervisor",
+      },
+      when: {
+        type: String,
+        default: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+      },
+    },
+  ],
   IssueCreatedAt: {
     type: String,
   },

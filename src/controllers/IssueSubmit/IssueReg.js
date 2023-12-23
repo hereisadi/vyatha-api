@@ -37,16 +37,17 @@ const issueReg = async (req, res) => {
           });
         } else {
           const { photo } = req.body;
-          let { description, category } = req.body; // client should send description, photo and category as payload
+          let { description, category, title } = req.body; // client should send description, photo and category as payload
 
-          if (!description || !photo || !category) {
+          if (!description || !photo || !category || !title) {
             return res.status(401).json({
-              error: "Please provide description and photo",
+              error: "Please provide title, description and photo",
             });
           }
 
           description = description?.toString().trim();
           category = category?.toString().trim();
+          title = title?.toString().trim();
 
           const issueRegistration = new IssueRegModel({
             name,
@@ -61,6 +62,8 @@ const issueReg = async (req, res) => {
               .tz("Asia/Kolkata")
               .format("DD-MM-YY h:mma"),
             otherID: randomGeneratedID,
+            title,
+            category,
           });
 
           await issueRegistration.save();
