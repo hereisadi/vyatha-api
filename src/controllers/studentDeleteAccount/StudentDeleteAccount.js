@@ -55,11 +55,9 @@ const studentDeleteAccount = async (req, res) => {
             .json({ error: "Account already scheduled for deletion" });
         }
       } else {
-        return res
-          .status(401)
-          .json({
-            error: "only role with student are allowed to delete their account",
-          });
+        return res.status(401).json({
+          error: "only role with student are allowed to delete their account",
+        });
       }
     } catch (err) {
       console.error(err);

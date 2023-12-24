@@ -25,6 +25,8 @@ const fetchIssues = async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
+      const allComplains = await IssueRegModel.find({});
+
       // for student
       if (user.role === "student") {
         const allIssues = await IssueRegModel.find({
@@ -54,10 +56,26 @@ const fetchIssues = async (req, res) => {
 
         // console.log(filteredStudentData);
 
+        // ? fetching the raised complains by the user:
+
+        const allComplaintsRaisedAboveSupervisor = allComplains.filter(
+          (complain) => {
+            return complain.raiseComplainTo.length > 1;
+          }
+        );
+
+        let allRaisedComplaints = [];
+        for (let i = 0; i < allComplaintsRaisedAboveSupervisor.length; i++) {
+          if (allComplaintsRaisedAboveSupervisor[i].email === user.email) {
+            allRaisedComplaints.push(allComplaintsRaisedAboveSupervisor[i]);
+          }
+        }
+
         res.status(200).json({
           success: true,
           allIssues,
           filteredStudentNotifications,
+          allRaisedComplaints,
         });
 
         // for supervisor
@@ -97,10 +115,19 @@ const fetchIssues = async (req, res) => {
         // console.log(filteredSupervisorNotifications);
         // console.log(filteredSupervisorNotifications.length);
 
+        // ? all raised complains to supervisor
+
+        const allComplaintsRaisedToSupervisor = allComplains.filter(
+          (complain) => {
+            return complain.raiseComplainTo.length === 1;
+          }
+        );
+
         res.status(200).json({
           success: true,
           issuesAssignedToSupervisor,
           filteredSupervisorNotifications,
+          allComplaintsRaisedToSupervisor,
         });
 
         // for warden
@@ -147,10 +174,14 @@ const fetchIssues = async (req, res) => {
 
         // console.log(filteredWardenNotifications.length);
 
+        const allComplaintsRaisedToWarden = allComplains.filter((complain) => {
+          return complain.raiseComplainTo.length === 2;
+        });
         res.status(200).json({
           success: true,
           sortedIssues,
           filteredWardenNotifications,
+          allComplaintsRaisedToWarden,
         });
 
         // for dsw
@@ -195,10 +226,14 @@ const fetchIssues = async (req, res) => {
           return dsw.hostel === user.hostel;
         });
 
+        const allComplaintsRaisedToDsw = allComplains.filter((complain) => {
+          return complain.raiseComplainTo.length === 3;
+        });
         res.status(200).json({
           success: true,
           sortedIssues,
           filteredDswNotifications,
+          allComplaintsRaisedToDsw,
         });
 
         // for superadmin (vyatha team)

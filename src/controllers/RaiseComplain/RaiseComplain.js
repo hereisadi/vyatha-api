@@ -50,6 +50,19 @@ const raiseComplain = async (req, res) => {
         const SecondComplainRaisedTo = issue?.raiseComplainTo[1]?.whom;
 
         // if difference between issueCreatedAt and currentTime is more than 7 days, then student can  raise complain to warden
+
+        // if(issue.raiseComplainTo.length === 1){
+        //   return res.status(200).json({message:"Complain raised to supervisor"})
+        // }
+
+        // if(issue.raiseComplainTo.length === 2){
+        //   return res.status(200).json({message:"Complain raised to warden"})
+        // }
+
+        // if(issue.raiseComplainTo.length === 3){
+        //   return res.status(200).json({message:"Complain raised to dsw"})
+        // }
+
         if (
           issue.raiseComplainTo.length === 1 &&
           firstComplainRaisedTo === "supervisor"
@@ -60,7 +73,10 @@ const raiseComplain = async (req, res) => {
               "days"
             ) > 7
           ) {
-            issue.raiseComplainTo = "warden";
+            issue.raiseComplainTo.push({
+              whom: "warden",
+              when: currentTime,
+            });
             issue.save();
             return res
               .status(200)
@@ -78,7 +94,10 @@ const raiseComplain = async (req, res) => {
             "days"
           ) > 7
         ) {
-          issue.raiseComplainTo = "dsw";
+          issue.raiseComplainTo.push({
+            whom: "dsw",
+            when: currentTime,
+          });
           issue.save();
           return res
             .status(200)
