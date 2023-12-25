@@ -63,8 +63,8 @@ const signup = async (req, res) => {
       const hashPwd = await bcrypt.hash(password, 10);
 
       if (designation === "Student") {
-        let scholarID,
-          room = req.body;
+        let { scholarID, room } = req.body;
+
         if (!scholarID || !room) {
           return res.status(400).json({ error: "missing scholarID" });
         }
@@ -108,6 +108,8 @@ const signup = async (req, res) => {
           success: true,
           message: "Signup successfully completed",
         });
+      } else {
+        return res.status(400).json({ error: "Invalid designation" });
       }
     } catch (err) {
       console.error(err);
