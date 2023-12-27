@@ -18,7 +18,7 @@ const resetPassword = async (req, res) => {
     const { password, confirmPassword } = req.body;
     let { token } = req.params;
 
-    if (!trimPassword || !trimCPassword || !token) {
+    if (!password || !confirmPassword || !token) {
       return res.status(400).json({ error: "Payload missing" });
     }
 
