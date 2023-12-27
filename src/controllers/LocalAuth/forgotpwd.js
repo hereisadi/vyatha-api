@@ -17,13 +17,13 @@ const forgotPwd = async (req, res) => {
     try {
       const { email } = req.body;
       if (!email) {
-        return res.status(400).json({ message: "Email is required" });
+        return res.status(400).json({ error: "Email is required" });
       }
       const Email = email?.toLowerCase().toString().trim();
 
       const user = await SignUpModel.findOne({ email: Email });
       if (!user) {
-        return res.status(400).json({ message: "No account exists" });
+        return res.status(400).json({ error: "No account exists" });
       }
 
       // genertaing token using crypto
@@ -56,7 +56,7 @@ const forgotPwd = async (req, res) => {
       });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: "Internal Server Error" });
+      res.status(500).json({ error: "Internal Server Error" });
     }
   });
 };

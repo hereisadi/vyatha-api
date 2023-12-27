@@ -11,7 +11,7 @@ const emailValidator = (req, res, next) => {
   );
 
   if (!emailValidatorRegex.test(email)) {
-    res.status(400).json({ error: errors.InvalidEmail });
+    return res.status(400).json({ error: errors.InvalidEmail });
   } else {
     next();
   }
