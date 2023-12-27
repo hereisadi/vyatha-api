@@ -46,7 +46,7 @@ const editPrfoile = (req, res) => {
         });
       }
 
-      if (newpwd.length < 8) {
+      if (newpwd !== "" && newpwd.length < 8) {
         return res.status(400).json({
           error: "password must be atleast 8 characters long",
         });
