@@ -25,9 +25,9 @@ const editPrfoile = (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      let { name, newpwd, cnewpwd, phone, room, hostel } = req.body;
+      let { name, newpwd, cnewpwd, phone, hostel, room } = req.body;
 
-      if (!name && !newpwd && !cnewpwd && !phone && !room && !hostel) {
+      if (!name && !newpwd && !cnewpwd && !phone && !hostel) {
         return res
           .status(400)
           .json({ error: "atleast one field must be filled" });
@@ -37,8 +37,8 @@ const editPrfoile = (req, res) => {
       newpwd = newpwd?.toString().trim();
       cnewpwd = cnewpwd?.toString().trim();
       phone = phone?.toString().trim();
-      room = room?.toString().trim();
       hostel = hostel?.toString().trim();
+      room = room?.toString().trim();
 
       if (newpwd !== "" && newpwd !== cnewpwd) {
         return res.status(400).json({
@@ -66,8 +66,10 @@ const editPrfoile = (req, res) => {
         user.phone = phone;
       }
 
-      if (room) {
-        user.room = room;
+      if (user.role === "student") {
+        if (room) {
+          user.room = room;
+        }
       }
 
       if (hostel) {
