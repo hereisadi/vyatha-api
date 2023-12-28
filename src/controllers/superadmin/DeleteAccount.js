@@ -45,7 +45,7 @@ const deleteAccount = (req, res) => {
         // only account with the role of student should be deleted as supervisor, warden and dsw are also some form of admin
 
         if (account.role === "student") {
-          await SignUpModel.findOneAndDelete({ accountID });
+          await SignUpModel.findOneAndDelete({ _id: accountID });
           res.status(200).json({
             success: true,
             message: "account deleted successfully",
