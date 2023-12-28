@@ -2,10 +2,10 @@ const { verifyToken } = require("../../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../../models/issues/issue");
 
-// POST to fetch all the issues hostel wise for SUPERADMIN only
+// GET to fetch all the issues hostel wise for SUPERADMIN only
 // role: superadmin
 // access: private
-// endpoint: /fetchallclosedissuehostelwise
+// endpoint: /fetchallclosedissuehostelwise/:hostel
 // payload: hostel
 
 const FetchAllClosedIssueHostelWise = (req, res) => {
@@ -23,8 +23,11 @@ const FetchAllClosedIssueHostelWise = (req, res) => {
       }
 
       if (user.role === "superadmin") {
-        const { hostel } = req.body; // client should send hostel as payload
-
+        let { hostel } = req.params; // client should send hostel as params
+        if (!hostel) {
+          return res.status(400).json("hostel is missing");
+        }
+        hostel = hostel.trim();
         const allHostelSpecificIssues = await IssueRegModel.find({
           hostel: hostel,
           isClosed: true,

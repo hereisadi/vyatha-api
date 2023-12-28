@@ -65,14 +65,14 @@ router.get("/profile/:_id", IndividualProfile);
 router.get("/fetchclosedissue", fetchClosedIssue);
 router.get("/getcomment/:issueID", getComments);
 router.get("/accountexists/:email", accountExists);
+router.get("/fetchissuehostelwise", fetchIssueHostelWise);
+router.get("/fetchallclosedissuehostelwise", FetchAllClosedIssueHostelWise);
 
 // post
 router.post("/createissue", issueReg); //tested
 router.post("/signup", signup); //tested
 router.post("/login", login); // tested
 // router.post("/detailedview", detailedViewOfIssue);
-router.post("/fetchissuehostelwise", fetchIssueHostelWise);
-router.post("/fetchallclosedissuehostelwise", FetchAllClosedIssueHostelWise);
 router.post("/addcomment/:issueID", addComment);
 router.post("/sendotp", sendotp);
 router.post("/verifyotp", verifyOtp);
