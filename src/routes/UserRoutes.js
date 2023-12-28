@@ -51,6 +51,9 @@ const {
 } = require("../controllers/studentDeleteAccount/StudentDeleteAccount");
 const { dashboard } = require("../controllers/Dashboard/Dashboard");
 const { raiseComplain } = require("../controllers/RaiseComplain/RaiseComplain");
+const {
+  IndividualProfile,
+} = require("../controllers/superadmin/IndividualProfile");
 
 // get
 router.get("/", home.home); // tested
@@ -58,6 +61,7 @@ router.get("/dashboard", dashboard);
 router.get("/fetchissues", fetchIssues);
 router.get("/detailedview/:issueId", detailedViewOfIssue);
 router.get("/getallaccounts", getAllAccounts);
+router.get("/profile/:_id", IndividualProfile);
 router.get("/fetchclosedissue", fetchClosedIssue);
 router.get("/getcomment/:issueID", getComments);
 router.get("/accountexists/:email", accountExists);
