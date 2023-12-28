@@ -36,7 +36,7 @@ const roleToDsw = (req, res) => {
 
         // const { role } = account;
 
-        if (account.role === "student") {
+        if (account.role === "warden") {
           account.role = "dsw";
           account.rolePromotedAt = moment
             .tz("Asia/Kolkata")
