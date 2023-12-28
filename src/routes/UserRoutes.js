@@ -65,8 +65,11 @@ router.get("/profile/:_id", IndividualProfile);
 router.get("/fetchclosedissue", fetchClosedIssue);
 router.get("/getcomment/:issueID", getComments);
 router.get("/accountexists/:email", accountExists);
-router.get("/fetchissuehostelwise", fetchIssueHostelWise);
-router.get("/fetchallclosedissuehostelwise", FetchAllClosedIssueHostelWise);
+router.get("/fetchissuehostelwise/:hostel", fetchIssueHostelWise);
+router.get(
+  "/fetchallclosedissuehostelwise/:hostel",
+  FetchAllClosedIssueHostelWise
+);
 
 // post
 router.post("/createissue", issueReg); //tested
