@@ -10,7 +10,7 @@ const SignUpSchema = new mongoose.Schema({
     type: String,
   },
   phone: {
-    required: true,
+    // required: true,
     type: String,
   },
   scholarID: {
@@ -27,7 +27,7 @@ const SignUpSchema = new mongoose.Schema({
     type: String,
   },
   hostel: {
-    required: true,
+    // required: true,
     type: String,
   },
   room: {
@@ -39,7 +39,7 @@ const SignUpSchema = new mongoose.Schema({
     type: String,
   },
   designation: {
-    required: true,
+    // required: true,
     type: String,
   },
   accountCreatedAt: {

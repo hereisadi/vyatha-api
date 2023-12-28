@@ -20,7 +20,7 @@ const IndividualProfile = async (req, res) => {
         if (!_id) {
           return res.status(404).json({ error: "missing id" });
         }
-        _id = _id.trim();
+        _id = _id.toString().trim();
         const individualProfile = await SignUpModel.findById(_id);
         if (!individualProfile) {
           return res.status(404).json({ error: "User not found" });
