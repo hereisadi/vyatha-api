@@ -9,7 +9,7 @@ const bcrypt = require("bcrypt");
 // access : private
 // endpoint: /editprofile
 
-// student can edit their name, password, hostel number, room number and phone number
+// student can edit their name, password, hostel number, room number and phone number, photo
 
 const editPrfoile = (req, res) => {
   verifyToken(req, res, async () => {
@@ -26,8 +26,8 @@ const editPrfoile = (req, res) => {
       }
 
       let { name, newpwd, cnewpwd, phone, hostel, room } = req.body;
-
-      if (!name && !newpwd && !cnewpwd && !phone && !hostel) {
+      const { photo } = req.body;
+      if (!name && !newpwd && !cnewpwd && !phone && !hostel && !photo) {
         return res
           .status(400)
           .json({ error: "atleast one field must be filled" });
@@ -74,6 +74,10 @@ const editPrfoile = (req, res) => {
 
       if (hostel) {
         user.hostel = hostel;
+      }
+
+      if (photo) {
+        user.profilepic = photo;
       }
 
       await user.save();
