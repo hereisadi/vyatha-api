@@ -1,6 +1,7 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
+const moment = require("moment-timezone");
 
 // PUT  to solve the issue
 // role: student
@@ -35,6 +36,7 @@ const closeIssue = async (req, res) => {
         if (issue.email === user.email) {
           if (issue.isClosed === false) {
             issue.isClosed = true;
+            issue.closedAt = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
             await issue.save();
             res.status(200).json({
               success: true,

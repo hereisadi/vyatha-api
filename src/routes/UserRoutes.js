@@ -77,6 +77,7 @@ router.post("/signup", signup); //tested
 router.post("/login", login); // tested
 // router.post("/detailedview", detailedViewOfIssue);
 router.post("/addcomment/:issueID", addComment);
+router.post("/raisecomplain", raiseComplain);
 router.post("/sendotp", sendotp);
 router.post("/verifyotp", verifyOtp);
 router.post("/forgotpassword", forgotPwd);
@@ -92,7 +93,6 @@ router.put("/promotetosupervisor", roleToSupervisor); //tested
 router.put("/promotetowarden", roleToWarden); //tested
 router.put("/editprofile", editPrfoile);
 router.put("/closeissue", closeIssue);
-router.put("/raisecomplain", raiseComplain);
 router.put("/editcomment/:issueID/:commentID", editComment);
 router.put("/approveissue", approveIssue);
 router.put("/verifyemail/:token", verifyMagicLink);

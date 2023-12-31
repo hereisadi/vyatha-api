@@ -24,14 +24,15 @@ const raiseComplain = async (req, res) => {
       }
 
       if (user.role === "student") {
-        let issueID = req.body;
+        let { issueID } = req.body;
         if (!issueID) {
           return res.status(400).json({ error: "Please provide issue ID" });
         }
         issueID = issueID?.toString().trim();
         const issue = await IssueRegModel.findById(issueID);
+        // const issue = await IssueRegModel.findOne({ _id: issueID });
         if (!issue) {
-          return res.status(401).json({ error: "No such issue exists" });
+          return res.status(404).json({ error: "No such issue exists" });
         }
         if (issue.email !== user.email) {
           return res.status(401).json({
