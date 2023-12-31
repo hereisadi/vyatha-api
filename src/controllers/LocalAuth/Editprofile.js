@@ -26,8 +26,16 @@ const editPrfoile = (req, res) => {
       }
 
       let { name, newpwd, cnewpwd, phone, hostel, room } = req.body;
-      const { photo } = req.body;
-      if (!name && !newpwd && !cnewpwd && !phone && !hostel && !photo) {
+      const { photo, idcard } = req.body;
+      if (
+        !name &&
+        !newpwd &&
+        !cnewpwd &&
+        !phone &&
+        !hostel &&
+        !photo &&
+        !idcard
+      ) {
         return res
           .status(400)
           .json({ error: "atleast one field must be filled" });
@@ -80,6 +88,9 @@ const editPrfoile = (req, res) => {
         user.profilepic = photo;
       }
 
+      if (idcard) {
+        user.idcard = idcard;
+      }
       await user.save();
       res.status(200).json({
         success: true,

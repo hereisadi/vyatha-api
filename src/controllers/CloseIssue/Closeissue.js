@@ -1,4 +1,4 @@
-const verifyToken = require("../../middlewares/VerifyToken");
+const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
 
