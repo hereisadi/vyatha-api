@@ -41,6 +41,15 @@ const markedAsSolved = async (req, res) => {
           });
         }
 
+        if (issue.isClosed === true) {
+          return res
+            .status(401)
+            .json({
+              error:
+                "Issue has been closed by the student, can't mark as solved",
+            });
+        }
+
         const notification = await NotificationModel.findOne({
           otherID: otherID,
         });
@@ -62,7 +71,7 @@ const markedAsSolved = async (req, res) => {
               time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
               message: `Issue has been Solved by the Supervisor of ${issue.hostel}`,
               isRead: false,
-              issueTitle: issue.name,
+              issueTitle: issue.title,
               hostel: issue.hostel,
             };
 

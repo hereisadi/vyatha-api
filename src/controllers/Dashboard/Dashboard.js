@@ -28,6 +28,7 @@ const dashboard = async (req, res) => {
           accountCreatedAt,
           isVerified,
           deleteAccount,
+          idcard,
         } = user;
         return res.status(200).json({
           success: true,
@@ -37,6 +38,7 @@ const dashboard = async (req, res) => {
             phone,
             scholarID,
             profilepic,
+            idcard,
             hostel,
             room,
             role,

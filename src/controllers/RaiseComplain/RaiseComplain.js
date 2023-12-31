@@ -2,10 +2,12 @@ const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const moment = require("moment-timezone");
 const { IssueRegModel } = require("../../models/issues/issue");
+const { v4: uuidv4 } = require("uuid");
+const { NotificationModel } = require("../../models/notification/notification");
 
 // access: private
 // endpoint: /raiseComplain
-// payload: issueID
+// payload: issueID and otherID
 // role: student
 // desc: raise complain to  warden and dsw
 
@@ -24,16 +26,35 @@ const raiseComplain = async (req, res) => {
       }
 
       if (user.role === "student") {
-        let { issueID } = req.body;
-        if (!issueID) {
-          return res.status(400).json({ error: "Please provide issue ID" });
+        let { issueID, otherID } = req.body;
+        if (!issueID || otherID) {
+          return res
+            .status(400)
+            .json({ error: "Please provide issue ID and otherID" });
         }
         issueID = issueID?.toString().trim();
+        otherID = otherID?.toString().trim();
         const issue = await IssueRegModel.findById(issueID);
         // const issue = await IssueRegModel.findOne({ _id: issueID });
         if (!issue) {
           return res.status(404).json({ error: "No such issue exists" });
         }
+
+        const notification = await NotificationModel.findOne({
+          otherID: otherID,
+        });
+        if (!notification) {
+          return res.status(401).json({
+            error: "No notification exists",
+          });
+        }
+
+        if (issue.isClosed === true) {
+          return res.status(401).json({
+            error: "Issue has been closed by the student, can't raise complain",
+          });
+        }
+
         if (issue.email !== user.email) {
           return res.status(401).json({
             error: "Not authorized to access this issue",
@@ -50,20 +71,6 @@ const raiseComplain = async (req, res) => {
         const SecondComplainTime = issue?.raiseComplainTo[1]?.when;
         const SecondComplainRaisedTo = issue?.raiseComplainTo[1]?.whom;
 
-        // if difference between issueCreatedAt and currentTime is more than 7 days, then student can  raise complain to warden
-
-        // if(issue.raiseComplainTo.length === 1){
-        //   return res.status(200).json({message:"Complain raised to supervisor"})
-        // }
-
-        // if(issue.raiseComplainTo.length === 2){
-        //   return res.status(200).json({message:"Complain raised to warden"})
-        // }
-
-        // if(issue.raiseComplainTo.length === 3){
-        //   return res.status(200).json({message:"Complain raised to dsw"})
-        // }
-
         if (
           issue.raiseComplainTo.length === 1 &&
           firstComplainRaisedTo === "supervisor"
@@ -79,6 +86,33 @@ const raiseComplain = async (req, res) => {
               when: currentTime,
             });
             issue.save();
+
+            // send notifcation to the warden and supervisor
+
+            // WARDEN NOTIFICATION
+            const notificationDetails = {
+              id: uuidv4(),
+              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              message: `New Issue has been raised to you by the student of ${user.hostel}`,
+              isRead: false,
+              issueTitle: issue.title,
+              hostel: issue.hostel,
+            };
+            notification.warden.push(notificationDetails);
+            await notification.save();
+
+            // SUPERVISOR NOTIFICATION
+            const newSupervisorNotification = {
+              id: uuidv4(),
+              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              message: `Issue has been raised to the Warden by the student of ${user.hostel}`,
+              isRead: false,
+              issueTitle: issue.title,
+              hostel: issue.hostel,
+            };
+            notification.supervisor.push(newSupervisorNotification);
+            await notification.save();
+
             return res
               .status(200)
               .json({ success: true, message: "Complain raised to warden" });
@@ -102,6 +136,31 @@ const raiseComplain = async (req, res) => {
               when: currentTime,
             });
             issue.save();
+
+            // DSW NOTIFICATION
+            const newNotification = {
+              id: uuidv4(),
+              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              message: `New Issue has been raised to you by the student of ${user.hostel}`,
+              isRead: false,
+              issueTitle: issue.title,
+              hostel: issue.hostel,
+            };
+            notification.dsw.push(newNotification);
+            await notification.save();
+
+            // Warden NOTIFICATION
+            const notificationDetails = {
+              id: uuidv4(),
+              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              message: `New Issue has been raised to the DSW by the student of ${user.hostel}`,
+              isRead: false,
+              issueTitle: issue.title,
+              hostel: issue.hostel,
+            };
+            notification.warden.push(notificationDetails);
+            await notification.save();
+
             return res
               .status(200)
               .json({ success: true, message: "Complain raised to dsw" });

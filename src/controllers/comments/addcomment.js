@@ -50,6 +50,18 @@ const addComment = async (req, res) => {
           });
         }
 
+        if (issue.isClosed === true) {
+          return res.status(401).json({
+            error: "Issue has been closed by the student, can't add comment",
+          });
+        }
+
+        if (!commentBody) {
+          return res.status(401).json({
+            error: "No comment body found",
+          });
+        }
+
         const newComment = {
           author: user.name,
           authorpic: user.profilepic,

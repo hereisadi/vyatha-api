@@ -56,6 +56,14 @@ const forwardIssue = async (req, res) => {
         });
       }
 
+      if (issue.isClosed === true) {
+        return res
+          .status(401)
+          .json({
+            error: "Issue has been closed by the student, can't forward",
+          });
+      }
+
       // for supervisor
       if (user.role === "supervisor" && issue.hostel === user.hostel) {
         if (issue.forwardedTo === "supervisor") {
@@ -74,7 +82,7 @@ const forwardIssue = async (req, res) => {
             time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
             message: `New Issue has been forwarded to you by the supervisor of ${user.hostel}`,
             isRead: false,
-            issueTitle: issue.name,
+            issueTitle: issue.title,
             hostel: issue.hostel,
           };
           notification.warden.push(notificationDetails);
@@ -95,7 +103,7 @@ const forwardIssue = async (req, res) => {
               time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
               message: `Your Issue has been forwarded to the warden of ${user.hostel} by the Supervisor`,
               isRead: false,
-              issueTitle: issue.name,
+              issueTitle: issue.title,
               hostel: issue.hostel,
               email: issue.email,
             };
@@ -138,7 +146,7 @@ const forwardIssue = async (req, res) => {
             time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
             message: `New Issue has been forwarded to you by the warden of ${user.hostel}`,
             isRead: false,
-            issueTitle: issue.name,
+            issueTitle: issue.title,
             hostel: issue.hostel,
           };
           notification.dsw.push(newNotification);
@@ -150,7 +158,7 @@ const forwardIssue = async (req, res) => {
             time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
             message: `Issue has been forwarded to the DSW by the warden of ${user.hostel}`,
             isRead: false,
-            issueTitle: issue.name,
+            issueTitle: issue.title,
             hostel: issue.hostel,
           };
           notification.supervisor.push(newSupervisorNotification);
@@ -162,7 +170,7 @@ const forwardIssue = async (req, res) => {
             time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
             message: `Your Issue has been forwarded to the DSW of ${user.hostel} by the Warden`,
             isRead: false,
-            issueTitle: issue.name,
+            issueTitle: issue.title,
             hostel: issue.hostel,
             email: issue.email,
           };

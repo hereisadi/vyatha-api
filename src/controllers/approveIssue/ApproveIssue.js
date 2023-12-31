@@ -40,6 +40,14 @@ const approveIssue = (req, res) => {
         });
       }
 
+      if (issue.isClosed === true) {
+        return res
+          .status(401)
+          .json({
+            error: "Issue has been closed by the student, can't approve",
+          });
+      }
+
       const notification = await NotificationModel.findOne({
         otherID: otherID,
       });
@@ -66,7 +74,7 @@ const approveIssue = (req, res) => {
           time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
           message: `Issue has been approved by the Warden of ${user.hostel}`,
           isRead: false,
-          issueTitle: issue.name,
+          issueTitle: issue.title,
           hostel: issue.hostel,
         };
         notification.supervisor.push(supervisorNotification);
@@ -78,7 +86,7 @@ const approveIssue = (req, res) => {
           time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
           message: `Issue has been approved by the Warden of ${user.hostel}`,
           isRead: false,
-          issueTitle: issue.name,
+          issueTitle: issue.title,
           hostel: issue.hostel,
           email: issue.email,
         };
@@ -108,7 +116,7 @@ const approveIssue = (req, res) => {
           time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
           message: `Issue has been approved by the DSW of ${user.hostel}`,
           isRead: false,
-          issueTitle: issue.name,
+          issueTitle: issue.title,
           hostel: issue.hostel,
         };
         notification.warden.push(wNotification);
@@ -122,7 +130,7 @@ const approveIssue = (req, res) => {
           time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
           message: `Your Issue has been approved by the DSW of ${user.hostel}`,
           isRead: false,
-          issueTitle: issue.name,
+          issueTitle: issue.title,
           hostel: issue.hostel,
           email: issue.email,
         };
