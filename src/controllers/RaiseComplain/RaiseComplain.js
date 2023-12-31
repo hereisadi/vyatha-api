@@ -27,7 +27,7 @@ const raiseComplain = async (req, res) => {
 
       if (user.role === "student") {
         let { issueID, otherID } = req.body;
-        if (!issueID || otherID) {
+        if (!issueID || !otherID) {
           return res
             .status(400)
             .json({ error: "Please provide issue ID and otherID" });
