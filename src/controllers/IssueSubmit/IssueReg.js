@@ -25,7 +25,17 @@ const issueReg = async (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      const { role, name, email, hostel, isVerified, room, scholarID } = user;
+      const {
+        role,
+        name,
+        email,
+        hostel,
+        isVerified,
+        room,
+        scholarID,
+        phone,
+        idcard,
+      } = user;
 
       const randomGeneratedID = uniqueid.uniqueID;
       // only student can file an issue
@@ -64,6 +74,8 @@ const issueReg = async (req, res) => {
             otherID: randomGeneratedID,
             title,
             category,
+            phone,
+            idcard,
           });
 
           await issueRegistration.save();

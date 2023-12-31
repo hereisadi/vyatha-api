@@ -42,12 +42,9 @@ const markedAsSolved = async (req, res) => {
         }
 
         if (issue.isClosed === true) {
-          return res
-            .status(401)
-            .json({
-              error:
-                "Issue has been closed by the student, can't mark as solved",
-            });
+          return res.status(401).json({
+            error: "Issue has been closed by the student, can't mark as solved",
+          });
         }
 
         const notification = await NotificationModel.findOne({

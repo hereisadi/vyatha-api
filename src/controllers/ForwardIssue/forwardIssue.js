@@ -57,11 +57,9 @@ const forwardIssue = async (req, res) => {
       }
 
       if (issue.isClosed === true) {
-        return res
-          .status(401)
-          .json({
-            error: "Issue has been closed by the student, can't forward",
-          });
+        return res.status(401).json({
+          error: "Issue has been closed by the student, can't forward",
+        });
       }
 
       // for supervisor
@@ -124,7 +122,8 @@ const forwardIssue = async (req, res) => {
 
         res.status(200).json({
           success: true,
-          message: "Issue forwarded successfully and notification saved",
+          message:
+            "Issue forwarded successfully to the warden and notification saved",
         });
       }
 
@@ -179,7 +178,8 @@ const forwardIssue = async (req, res) => {
 
           res.status(200).json({
             success: true,
-            message: "Issue forwarded successfully and notification saved",
+            message:
+              "Issue forwarded successfully to the dsw and notification saved",
           });
         } else if (issue.forwardedTo === "dsw") {
           return res.status(400).json({
@@ -193,10 +193,10 @@ const forwardIssue = async (req, res) => {
           });
         }
 
-        res.status(200).json({
-          success: true,
-          message: "Issue forwarded successfully and notification saved",
-        });
+        // res.status(200).json({
+        //   success: true,
+        //   message: "Issue forwarded successfully and notification saved",
+        // });
       } else {
         return res.status(400).json({
           success: false,

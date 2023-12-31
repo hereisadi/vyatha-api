@@ -16,6 +16,12 @@ const IssueRegSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  phone: {
+    type: String,
+  },
+  idcard: {
+    type: String,
+  },
   title: {
     required: true,
     type: String,
