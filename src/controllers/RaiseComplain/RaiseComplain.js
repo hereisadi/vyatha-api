@@ -89,20 +89,27 @@ const raiseComplain = async (req, res) => {
           }
         } else if (
           issue.raiseComplainTo.length === 2 &&
-          SecondComplainRaisedTo === "warden" &&
-          moment(currentTime, "DD-MM-YY h:mma").diff(
-            moment(SecondComplainTime, "DD-MM-YY h:mma"),
-            "days"
-          ) > 7
+          SecondComplainRaisedTo === "warden"
         ) {
-          issue.raiseComplainTo.push({
-            whom: "dsw",
-            when: currentTime,
-          });
-          issue.save();
-          return res
-            .status(200)
-            .json({ success: true, message: "Complain raised to dsw" });
+          if (
+            moment(currentTime, "DD-MM-YY h:mma").diff(
+              moment(SecondComplainTime, "DD-MM-YY h:mma"),
+              "days"
+            ) > 7
+          ) {
+            issue.raiseComplainTo.push({
+              whom: "dsw",
+              when: currentTime,
+            });
+            issue.save();
+            return res
+              .status(200)
+              .json({ success: true, message: "Complain raised to dsw" });
+          } else {
+            return res
+              .status(401)
+              .json({ error: "Can't raise complain to dsw before 7 days" });
+          }
         } else if (issue.raiseComplainTo.length === 3) {
           return res
             .status(401)
