@@ -38,7 +38,6 @@ const fetchClosedIssue = (req, res) => {
       // for supervisor
       else if (user.role === "supervisor") {
         const issuesAssignedToSupervisor = await IssueRegModel.find({
-          forwardedTo: "supervisor",
           hostel: user.hostel,
           isClosed: true,
         }).sort({
@@ -53,7 +52,8 @@ const fetchClosedIssue = (req, res) => {
       // for warden
       else if (user.role === "warden") {
         const issuesAssignedToWarden = await IssueRegModel.find({
-          forwardedTo: "warden",
+          // forwardedTo: "warden",
+          forwardedTo: { $in: ["warden", "dsw"] },
           hostel: user.hostel,
           isClosed: true,
         }).sort({
