@@ -61,10 +61,20 @@ const approveIssue = (req, res) => {
         issue.hostel === user.hostel &&
         issue.forwardedTo === "warden"
       ) {
-        issue.IssueForwardedToWarden[
-          issue.IssueForwardedToWarden.length - 1
-        ].isApproved = true;
-        await issue.save();
+        if (
+          issue.IssueForwardedToWarden[issue.IssueForwardedToWarden.length - 1]
+            .isApproved === false
+        ) {
+          issue.IssueForwardedToWarden[
+            issue.IssueForwardedToWarden.length - 1
+          ].isApproved = true;
+          await issue.save();
+        } else {
+          return res.status(400).json({
+            success: false,
+            error: "Issue has already been approved by the warden",
+          });
+        }
 
         // saving notification for supervisor's dashboard
         const supervisorNotification = {
@@ -103,10 +113,19 @@ const approveIssue = (req, res) => {
         issue.hostel === user.hostel &&
         issue.forwardedTo === "dsw"
       ) {
-        issue.IssueForwardedToDsw[
-          issue.IssueForwardedToDsw.length - 1
-        ].isApproved = true;
-        await issue.save();
+        if (
+          issue.IssueForwardedToDsw[issue.IssueForwardedToDsw.length - 1]
+            .isApproved === false
+        ) {
+          issue.IssueForwardedToDsw[
+            issue.IssueForwardedToDsw.length - 1
+          ].isApproved = true;
+          await issue.save();
+        } else {
+          return res
+            .status(400)
+            .json({ error: "Issue has already been approved by the dsw" });
+        }
 
         // saving notification for warden's dashboard
         const wNotification = {
