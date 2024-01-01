@@ -54,6 +54,32 @@ const closeIssue = async (req, res) => {
             error: "Not authorized to access this issue",
           });
         }
+      } else if (user.role === "supervisor") {
+        const { issueId } = req.body;
+        const issue = await IssueRegModel.findById(issueId);
+        if (!issue) {
+          return res.status(401).json({
+            success: false,
+            error: "No issue found with this id",
+          });
+        }
+        if (issue.isClosed === false) {
+          if (user.hostel === issue.hostel) {
+            issue.isClosed = true;
+            issue.closedAt = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
+            await issue.save();
+            res.status(200).json({
+              success: true,
+              message: "Issue closed successfully",
+            });
+          } else {
+            return res
+              .status(400)
+              .json({ error: "Not authorized to access this issue" });
+          }
+        } else {
+          return res.status(401).json({ error: "Issue already closed" });
+        }
       } else {
         return res
           .status(401)

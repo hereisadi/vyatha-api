@@ -133,7 +133,7 @@ const fetchIssues = async (req, res) => {
         // for warden
       } else if (user.role === "warden") {
         const issuesAssignedToWarden = await IssueRegModel.find({
-          forwardedTo: "warden",
+          forwardedTo: { $in: ["warden", "dsw"] },
           hostel: user.hostel,
           isClosed: false,
         });
