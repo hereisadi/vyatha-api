@@ -69,7 +69,7 @@ const fetchClosedIssue = (req, res) => {
       } else if (user.role === "dsw") {
         const issuesAssignedToDsw = await IssueRegModel.find({
           forwardedTo: "dsw",
-          hostel: user.hostel,
+          // hostel: user.hostel,
           isClosed: true,
         }).sort({
           IssueForwardedAtToDsw: -1,

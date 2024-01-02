@@ -110,7 +110,7 @@ const approveIssue = (req, res) => {
       //DSW APPROVAL
       else if (
         user.role === "dsw" &&
-        issue.hostel === user.hostel &&
+        // issue.hostel === user.hostel &&
         issue.forwardedTo === "dsw"
       ) {
         if (
@@ -131,7 +131,7 @@ const approveIssue = (req, res) => {
         const wNotification = {
           id: uuidv4(),
           time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-          message: `Issue has been approved by the DSW of ${user.hostel}`,
+          message: `Issue has been approved by the DSW`,
           isRead: false,
           issueTitle: issue.title,
           hostel: issue.hostel,
@@ -145,7 +145,7 @@ const approveIssue = (req, res) => {
         const sNotification = {
           id: uuidv4(),
           time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-          message: `Your Issue has been approved by the DSW of ${user.hostel}`,
+          message: `Your Issue has been approved by the DSW`,
           isRead: false,
           issueTitle: issue.title,
           hostel: issue.hostel,

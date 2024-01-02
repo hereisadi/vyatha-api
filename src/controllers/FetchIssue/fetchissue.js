@@ -188,7 +188,7 @@ const fetchIssues = async (req, res) => {
       } else if (user.role === "dsw") {
         const issuesAssignedToDsw = await IssueRegModel.find({
           forwardedTo: "dsw",
-          hostel: user.hostel,
+          // hostel: user.hostel,
           isClosed: false,
         });
         // .sort({
@@ -222,9 +222,11 @@ const fetchIssues = async (req, res) => {
         }
         // console.log(dswData.length);
 
-        const filteredDswNotifications = dswData.filter((dsw) => {
-          return dsw.hostel === user.hostel;
-        });
+        // const filteredDswNotifications = dswData.filter((dsw) => {
+        //   return dsw.hostel === user.hostel;
+        // });
+
+        const filteredDswNotifications = dswData;
 
         const allComplaintsRaisedToDsw = allComplains.filter((complain) => {
           return complain.raiseComplainTo.length === 3;

@@ -18,14 +18,12 @@ const signup = async (req, res) => {
   emailValidator(req, res, async () => {
     passwordValidator(req, res, async () => {
       try {
-        let { name, email, password, cpassword, hostel, designation, phone } =
-          req.body; // client should name, email, password, cpassword, hostel and designation as payload
+        let { name, email, password, cpassword, designation, phone } = req.body; // client should name, email, password, cpassword, hostel and designation as payload
         if (
           !name ||
           !email ||
           !password ||
           !cpassword ||
-          !hostel ||
           !designation ||
           !phone
         ) {
@@ -38,7 +36,7 @@ const signup = async (req, res) => {
         email = email?.toLowerCase().toString().trim();
         password = password?.toString().trim();
         cpassword = cpassword?.toString().trim();
-        hostel = hostel?.toString().trim();
+        // hostel = hostel?.toString().trim();
         designation = designation?.toString().trim();
         phone = phone?.toString().trim();
 
@@ -65,13 +63,14 @@ const signup = async (req, res) => {
         const hashPwd = await bcrypt.hash(password, 10);
 
         if (designation === "Student") {
-          let { scholarID, room } = req.body;
+          let { scholarID, room, hostel } = req.body;
 
-          if (!scholarID || !room) {
+          if (!scholarID || !room || !hostel) {
             return res.status(400).json({ error: "missing scholarID" });
           }
           scholarID = scholarID?.toString().trim();
           room = room?.toString().trim();
+          hostel = hostel?.toString().trim();
 
           const user = new SignUpModel({
             email,
@@ -92,11 +91,14 @@ const signup = async (req, res) => {
             success: true,
             message: "Signup successfully completed",
           });
-        } else if (
-          designation === "Warden" ||
-          designation === "Supervisor" ||
-          designation === "Dean"
-        ) {
+        } else if (designation === "Warden" || designation === "Supervisor") {
+          let { hostel } = req.body;
+          if (!hostel) {
+            return res.status(400).json({ error: "missing hostel" });
+          }
+
+          hostel = hostel?.toString().trim();
+
           const user = new SignUpModel({
             email,
             name,
@@ -105,6 +107,23 @@ const signup = async (req, res) => {
               .tz("Asia/Kolkata")
               .format("DD-MM-YY h:mma"),
             hostel,
+            phone,
+            designation,
+          });
+
+          await user.save();
+          res.status(200).json({
+            success: true,
+            message: "Signup successfully completed",
+          });
+        } else if (designation === "Dean") {
+          const user = new SignUpModel({
+            email,
+            name,
+            password: hashPwd,
+            accountCreatedAt: moment
+              .tz("Asia/Kolkata")
+              .format("DD-MM-YY h:mma"),
             phone,
             designation,
           });

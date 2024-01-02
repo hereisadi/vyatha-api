@@ -80,17 +80,22 @@ const editPrfoile = (req, res) => {
         }
       }
 
-      if (hostel) {
-        user.hostel = hostel;
+      if (user.role !== "dsw") {
+        if (hostel) {
+          user.hostel = hostel;
+        }
       }
 
       if (photo) {
         user.profilepic = photo;
       }
 
-      if (idcard) {
-        user.idcard = idcard;
+      if (user.role === "student") {
+        if (idcard) {
+          user.idcard = idcard;
+        }
       }
+
       await user.save();
       res.status(200).json({
         success: true,

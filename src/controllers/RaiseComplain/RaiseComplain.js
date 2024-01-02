@@ -11,6 +11,8 @@ const { NotificationModel } = require("../../models/notification/notification");
 // role: student
 // desc: raise complain to  warden and dsw
 
+// NOTE: ONLY role==="student" can raise the complain
+
 const raiseComplain = async (req, res) => {
   verifyToken(req, res, async () => {
     try {
@@ -159,6 +161,18 @@ const raiseComplain = async (req, res) => {
               hostel: issue.hostel,
             };
             notification.warden.push(notificationDetails);
+            await notification.save();
+
+            // SUPERVISOR NOTIFICATION
+            const newSupervisorNotification = {
+              id: uuidv4(),
+              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              message: `Issue has been raised to the DSW by the student of ${user.hostel}`,
+              isRead: false,
+              issueTitle: issue.title,
+              hostel: issue.hostel,
+            };
+            notification.supervisor.push(newSupervisorNotification);
             await notification.save();
 
             return res
