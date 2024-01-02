@@ -86,7 +86,10 @@ const detailedViewOfIssue = async (req, res) => {
           return res.status(401).json({ error: "No such issue exists" });
         }
 
-        if (issue.forwardedTo === "warden" && issue.hostel === user.hostel) {
+        if (
+          ["warden", "dsw"].includes(issue.forwardedTo) &&
+          issue.hostel === user.hostel
+        ) {
           res.status(200).json({
             success: true,
             issue,

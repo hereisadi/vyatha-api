@@ -70,6 +70,7 @@ const markedAsSolved = async (req, res) => {
               isRead: false,
               issueTitle: issue.title,
               hostel: issue.hostel,
+              email: issue.email,
             };
 
             notification.student.push(Snotification);
