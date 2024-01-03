@@ -13,9 +13,11 @@ const emailValidator = (req, res, next) => {
   if (designation !== "" && designation === "Supervisor") {
     next();
   } else if (
+    // for login and forgot password things
     designation === "" ||
     designation === undefined ||
     designation === null ||
+    // for signup things
     designation === "Student" ||
     designation === "Warden" ||
     designation === "Dean"
