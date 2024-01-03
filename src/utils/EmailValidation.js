@@ -1,7 +1,7 @@
 const errors = require("../utils/error/error");
 
 const emailValidator = (req, res, next) => {
-  let { email } = req.body;
+  let { email, designation } = req.body;
   if (!email) {
     return res.status(400).json({ error: "email is missing" });
   }
@@ -10,10 +10,21 @@ const emailValidator = (req, res, next) => {
     /^[a-zA-Z0-9._-]+@([a-z]+\.)?nits\.ac\.in$/
   );
 
-  if (!emailValidatorRegex.test(email)) {
-    return res.status(400).json({ error: errors.InvalidEmail });
-  } else {
+  if (designation !== "" && designation === "Supervisor") {
     next();
+  } else if (
+    designation === "" ||
+    designation === undefined ||
+    designation === null ||
+    designation === "Student" ||
+    designation === "Warden" ||
+    designation === "Dean"
+  ) {
+    if (!emailValidatorRegex.test(email)) {
+      return res.status(400).json({ error: errors.InvalidEmail });
+    } else {
+      next();
+    }
   }
 };
 

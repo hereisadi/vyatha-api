@@ -14,6 +14,8 @@ const passwordValidator = require("../../utils/PasswordValidation");
 
 // ? designations: Student, Warden, Supervisor, Dean
 
+// supervisor doesn't have the nits domain, so allow the registration from other other domain too, if Designation is Supervisor
+
 const signup = async (req, res) => {
   emailValidator(req, res, async () => {
     passwordValidator(req, res, async () => {
