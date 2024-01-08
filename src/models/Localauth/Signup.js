@@ -24,6 +24,7 @@ const SignUpSchema = new mongoose.Schema({
   },
   idcard: {
     type: String,
+    default: "",
   },
   password: {
     required: true,

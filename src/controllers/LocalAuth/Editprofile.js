@@ -62,6 +62,42 @@ const editPrfoile = (req, res) => {
 
       const newHashedPwd = await bcrypt.hash(newpwd, 10);
 
+      if (name === user.name) {
+        return res.status(400).json({ error: "name is same as before" });
+      }
+
+      if (phone === user.phone) {
+        return res
+          .status(400)
+          .json({ error: "phone number is same as before" });
+      }
+
+      if (user.role !== "dsw") {
+        if (hostel === user.hostel) {
+          return res
+            .status(400)
+            .json({ error: "hostel number is same as before" });
+        }
+      }
+
+      if (user.role === "student") {
+        if (room === user.room) {
+          return res
+            .status(400)
+            .json({ error: "room number is same as before" });
+        }
+      }
+
+      if (photo === user.profilepic) {
+        return res.status(400).json({ error: "photo is same as before" });
+      }
+
+      if (user.role === "student") {
+        if (idcard === user.idcard) {
+          return res.status(400).json({ error: "idcard is same as before" });
+        }
+      }
+
       if (name) {
         user.name = name;
       }

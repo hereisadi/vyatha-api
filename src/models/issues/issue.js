@@ -125,6 +125,19 @@ const IssueRegSchema = new mongoose.Schema({
       editedAt: String,
     },
   ],
+  isIssueEdited: {
+    type: Boolean,
+    default: false,
+  },
+  editIssue: {
+    type: [
+      {
+        editedAt: {
+          type: String,
+        },
+      },
+    ],
+  },
 });
 
 const IssueRegModel = mongoose.model("IssueReg", IssueRegSchema);

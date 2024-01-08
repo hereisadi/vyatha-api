@@ -54,6 +54,7 @@ const { raiseComplain } = require("../controllers/RaiseComplain/RaiseComplain");
 const {
   IndividualProfile,
 } = require("../controllers/superadmin/IndividualProfile");
+const { editComplaint } = require("../controllers/EditComplaint/EditComplaint");
 
 // get
 router.get("/", home.home); // tested
@@ -97,6 +98,7 @@ router.put("/editcomment/:issueID/:commentID", editComment);
 router.put("/approveissue", approveIssue);
 router.put("/verifyemail/:token", verifyMagicLink);
 router.put("/studentdeleteaccount", studentDeleteAccount);
+router.put("/editissue", editComplaint);
 
 //delete
 router.delete("/deleteaccount", deleteAccount);
