@@ -63,27 +63,27 @@ const editComplaint = (req, res) => {
         }
 
         if (
-          title === user.title &&
-          description === user.description &&
-          category === user.category &&
-          photo === user.photo
+          title === issue.title &&
+          description === issue.description &&
+          category === issue.category &&
+          photo === issue.photo
         ) {
           return res.status(400).json({ error: "no changes made" });
         }
 
-        if (description !== user.description) {
+        if (description !== issue.description) {
           issue.description = description;
         }
 
-        if (category !== user.category) {
+        if (category !== issue.category) {
           issue.category = category;
         }
 
-        if (title !== user.title) {
+        if (title !== issue.title) {
           issue.title = title;
         }
 
-        if (photo !== user.photo) {
+        if (photo !== issue.photo) {
           issue.photo = photo;
         }
 
@@ -92,7 +92,7 @@ const editComplaint = (req, res) => {
           issue.isIssueEdited = true;
         }
 
-        issue.raiseComplainTo.push({
+        issue.editIssue.push({
           editedAt: currentTime,
         });
         await issue.save();
