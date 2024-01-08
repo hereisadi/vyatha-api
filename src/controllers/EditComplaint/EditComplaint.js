@@ -62,37 +62,28 @@ const editComplaint = (req, res) => {
           return res.status(401).json({ error: "Issue is solved, can't edit" });
         }
 
-        if (title === issue.title) {
-          return res.status(400).json({ error: "Title is same as before" });
+        if (
+          title === user.title &&
+          description === user.description &&
+          category === user.category &&
+          photo === user.photo
+        ) {
+          return res.status(400).json({ error: "no changes made" });
         }
 
-        if (description === issue.description) {
-          return res
-            .status(400)
-            .json({ error: "description is same as before" });
-        }
-
-        if (category === issue.category) {
-          return res.status(400).json({ error: "category is same as before" });
-        }
-
-        if (photo === issue.photo) {
-          return res.status(400).json({ error: "photo is same as before" });
-        }
-
-        if (description) {
+        if (description !== user.description) {
           issue.description = description;
         }
 
-        if (category) {
+        if (category !== user.category) {
           issue.category = category;
         }
 
-        if (title) {
+        if (title !== user.title) {
           issue.title = title;
         }
 
-        if (photo) {
+        if (photo !== user.photo) {
           issue.photo = photo;
         }
 

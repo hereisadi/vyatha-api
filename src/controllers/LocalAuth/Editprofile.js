@@ -27,19 +27,6 @@ const editPrfoile = (req, res) => {
 
       let { name, newpwd, cnewpwd, phone, hostel, room } = req.body;
       const { photo, idcard } = req.body;
-      if (
-        !name &&
-        !newpwd &&
-        !cnewpwd &&
-        !phone &&
-        !hostel &&
-        !photo &&
-        !idcard
-      ) {
-        return res
-          .status(400)
-          .json({ error: "atleast one field must be filled" });
-      }
 
       name = name?.toString().trim();
       newpwd = newpwd?.toString().trim();
@@ -62,43 +49,41 @@ const editPrfoile = (req, res) => {
 
       const newHashedPwd = await bcrypt.hash(newpwd, 10);
 
-      if (name === user.name) {
-        return res.status(400).json({ error: "name is same as before" });
-      }
-
-      if (phone === user.phone) {
-        return res
-          .status(400)
-          .json({ error: "phone number is same as before" });
-      }
-
-      if (user.role !== "dsw") {
-        if (hostel === user.hostel) {
-          return res
-            .status(400)
-            .json({ error: "hostel number is same as before" });
-        }
-      }
-
       if (user.role === "student") {
-        if (room === user.room) {
-          return res
-            .status(400)
-            .json({ error: "room number is same as before" });
+        if (
+          name === user.name &&
+          phone === user.phone &&
+          hostel === user.hostel &&
+          room === user.room &&
+          photo === user.photo &&
+          idcard === user.idcard
+        ) {
+          return res.status(400).json({ error: "Nothing to update" });
         }
       }
 
-      if (photo === user.profilepic) {
-        return res.status(400).json({ error: "photo is same as before" });
-      }
-
-      if (user.role === "student") {
-        if (idcard === user.idcard) {
-          return res.status(400).json({ error: "idcard is same as before" });
+      if (user.role === "supervisor" || user.role === "warden") {
+        if (
+          name === user.name &&
+          phone === user.phone &&
+          hostel === user.hostel &&
+          photo === user.photo
+        ) {
+          return res.status(400).json({ error: "Nothing to update" });
         }
       }
 
-      if (name) {
+      if (user.role === "dsw") {
+        if (
+          name === user.name &&
+          phone === user.phone &&
+          photo === user.photo
+        ) {
+          return res.status(400).json({ error: "Nothing to update" });
+        }
+      }
+
+      if (name !== user.name) {
         user.name = name;
       }
 
@@ -106,28 +91,28 @@ const editPrfoile = (req, res) => {
         user.password = newHashedPwd;
       }
 
-      if (phone) {
+      if (phone !== user.phone) {
         user.phone = phone;
       }
 
       if (user.role === "student") {
-        if (room) {
+        if (room !== user.room) {
           user.room = room;
         }
       }
 
       if (user.role !== "dsw") {
-        if (hostel) {
+        if (hostel !== user.hostel) {
           user.hostel = hostel;
         }
       }
 
-      if (photo) {
+      if (photo !== user.photo) {
         user.profilepic = photo;
       }
 
       if (user.role === "student") {
-        if (idcard) {
+        if (idcard !== user.idcard) {
           user.idcard = idcard;
         }
       }
