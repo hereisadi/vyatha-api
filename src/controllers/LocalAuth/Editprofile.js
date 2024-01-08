@@ -83,7 +83,7 @@ const editPrfoile = (req, res) => {
         }
       }
 
-      if (name !== user.name) {
+      if (name && name !== user.name) {
         user.name = name;
       }
 
@@ -91,28 +91,28 @@ const editPrfoile = (req, res) => {
         user.password = newHashedPwd;
       }
 
-      if (phone !== user.phone) {
+      if (phone && phone !== user.phone) {
         user.phone = phone;
       }
 
       if (user.role === "student") {
-        if (room !== user.room) {
+        if (room && room !== user.room) {
           user.room = room;
         }
       }
 
       if (user.role !== "dsw") {
-        if (hostel !== user.hostel) {
+        if (hostel && hostel !== user.hostel) {
           user.hostel = hostel;
         }
       }
 
-      if (photo !== user.photo) {
+      if (photo && photo !== user.photo) {
         user.profilepic = photo;
       }
 
       if (user.role === "student") {
-        if (idcard !== user.idcard) {
+        if (idcard && idcard !== user.idcard) {
           user.idcard = idcard;
         }
       }
