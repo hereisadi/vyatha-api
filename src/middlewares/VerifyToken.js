@@ -1,14 +1,13 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const verifyToken = (req, res, next) => {
-  const token = req?.headers?.authorization;
-
-  if (!token) {
-    return res.status(401).json({ error: "Missing token" });
-  }
-
+const verifyToken = async (req, res, next) => {
   try {
+    const token = req?.headers?.authorization;
+
+    if (!token) {
+      return res.status(401).json({ error: "Missing token" });
+    }
     const decoded = jwt.verify(
       token.split(" ")[1],
       process.env.YOUR_SECRET_KEY
