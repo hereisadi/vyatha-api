@@ -71,19 +71,19 @@ const editComplaint = (req, res) => {
           return res.status(400).json({ error: "no changes made" });
         }
 
-        if (description !== issue.description) {
+        if (description && description !== issue.description) {
           issue.description = description;
         }
 
-        if (category !== issue.category) {
+        if (category && category !== issue.category) {
           issue.category = category;
         }
 
-        if (title !== issue.title) {
+        if (title && title !== issue.title) {
           issue.title = title;
         }
 
-        if (photo !== issue.photo) {
+        if (photo && photo !== issue.photo) {
           issue.photo = photo;
         }
 
