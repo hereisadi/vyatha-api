@@ -55,6 +55,9 @@ const {
   IndividualProfile,
 } = require("../controllers/superadmin/IndividualProfile");
 const { editComplaint } = require("../controllers/EditComplaint/EditComplaint");
+const {
+  getScheduleDeleteAccount,
+} = require("../controllers/superadmin/GetScheduledDeleteAccount");
 
 // get
 router.get("/", home.home); // tested
@@ -71,6 +74,7 @@ router.get(
   "/fetchallclosedissuehostelwise/:hostel",
   FetchAllClosedIssueHostelWise
 );
+router.get("/getscheduledaccounts", getScheduleDeleteAccount);
 
 // post
 router.post("/createissue", issueReg); //tested

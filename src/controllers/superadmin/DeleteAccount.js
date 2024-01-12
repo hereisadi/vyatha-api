@@ -1,5 +1,8 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
-const { SignUpModel } = require("../../models/Localauth/Signup");
+const {
+  SignUpModel,
+  deleteAccountModel,
+} = require("../../models/Localauth/Signup");
 // delete request to delete the  account
 
 // DELETE account
@@ -45,6 +48,8 @@ const deleteAccount = (req, res) => {
         // only account with the role of student should be deleted as supervisor, warden and dsw are also some form of admin
 
         if (account.role === "student") {
+          const deletedAccount = new deleteAccountModel(account.toObject());
+          await deletedAccount.save();
           await SignUpModel.findOneAndDelete({ _id: accountID });
           res.status(200).json({
             success: true,

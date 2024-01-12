@@ -74,7 +74,15 @@ const SignUpSchema = new mongoose.Schema({
 });
 
 const SignUpModel = mongoose.model("UserSignup", SignUpSchema);
+const deletedAccountSchema = new mongoose.Schema(SignUpModel.schema.obj, {
+  collection: "DeletedAccounts",
+});
+const deleteAccountModel = mongoose.model(
+  "deletedAccount",
+  deletedAccountSchema
+);
 
 module.exports = {
   SignUpModel,
+  deleteAccountModel,
 };
