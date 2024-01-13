@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const moment = require("moment-timezone");
 const emailValidator = require("../../utils/EmailValidation");
 const passwordValidator = require("../../utils/PasswordValidation");
+const { sendEmail } = require("../../utils/EmailService");
+
 // const { verifyOTP } = require("../../middlewares/verifyotp");
 
 // const verifyOTP = require("../../middlewares/verifyotp");
@@ -89,6 +91,12 @@ const signup = async (req, res) => {
           });
 
           await user.save();
+          sendEmail(
+            email,
+            "Welcome to Vyatha!",
+            `Hi ${name},\n\n Welcome to Vyatha. We are glad to have you on board. Please login, go to dashboard and verify you email to start using the service.\n\n Team Vyatha`
+          );
+
           res.status(200).json({
             success: true,
             message: "Signup successfully completed",
@@ -114,6 +122,12 @@ const signup = async (req, res) => {
           });
 
           await user.save();
+          sendEmail(
+            email,
+            "Welcome to Vyatha!",
+            `Hi ${name},\n\n Welcome to Vyatha. We are glad to have you on board. Please login, go to dashboard and verify you email to start using the service.\n\n You will be getting the necessary role to manage the complaints, for this please drop a mail to unnamedcreators.dev@gmail.com with your name, email and hostel.\n\n Team Vyatha`
+          );
+
           res.status(200).json({
             success: true,
             message: "Signup successfully completed",
@@ -131,6 +145,11 @@ const signup = async (req, res) => {
           });
 
           await user.save();
+          sendEmail(
+            email,
+            "Welcome to Vyatha!",
+            `Hello ${name} Sir,\n\n Welcome to Vyatha. We are glad to have you on board. Please login, go to dashboard and verify you email to start using the service.\n\n You will be getting the necessary role to manage the complaints, for this please drop a mail to unnamedcreators.dev@gmail.com with your name, email and hostel.\n\n Team Vyatha`
+          );
           res.status(200).json({
             success: true,
             message: "Signup successfully completed",
