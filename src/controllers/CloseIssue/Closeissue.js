@@ -38,6 +38,13 @@ const closeIssue = async (req, res) => {
           });
         }
 
+        if (issue.isSolved === true) {
+          return res.status(400).json({
+            success: false,
+            error: "Issue is solved",
+          });
+        }
+
         const notification = await NotificationModel.findOne({
           otherID: otherID,
         });
@@ -130,6 +137,13 @@ const closeIssue = async (req, res) => {
           return res.status(401).json({
             success: false,
             error: "No issue found with this id",
+          });
+        }
+
+        if (issue.isSolved === true) {
+          return res.status(400).json({
+            success: false,
+            error: "Issue is solved",
           });
         }
 

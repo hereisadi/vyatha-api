@@ -56,6 +56,12 @@ const addComment = async (req, res) => {
           });
         }
 
+        if (issue.isSolved === true) {
+          return res.status(401).json({
+            error: "Issue has been solved, can't add comment",
+          });
+        }
+
         if (!commentBody) {
           return res.status(401).json({
             error: "No comment body found",
