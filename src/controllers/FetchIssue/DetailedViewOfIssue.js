@@ -86,8 +86,10 @@ const detailedViewOfIssue = async (req, res) => {
           return res.status(401).json({ error: "No such issue exists" });
         }
 
+        // make sure if the issue has been raised to the warden and dsw, then its detailed view should be accessible
         if (
-          ["warden", "dsw"].includes(issue.forwardedTo) &&
+          (["warden", "dsw"].includes(issue.forwardedTo) ||
+            issue.raiseComplainTo.length > 1) &&
           issue.hostel === user.hostel
         ) {
           res.status(200).json({
@@ -114,7 +116,7 @@ const detailedViewOfIssue = async (req, res) => {
           return res.status(401).json({ error: "No such issue exists" });
         }
 
-        if (issue.forwardedTo === "dsw") {
+        if (issue.forwardedTo === "dsw" || issue.raiseComplainTo.length > 2) {
           res.status(200).json({
             success: true,
             issue,
