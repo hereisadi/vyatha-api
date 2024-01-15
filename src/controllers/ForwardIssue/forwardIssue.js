@@ -82,6 +82,7 @@ const forwardIssue = async (req, res) => {
             isRead: false,
             issueTitle: issue.title,
             hostel: issue.hostel,
+            issueID: issue._id,
           };
           notification.warden.push(notificationDetails);
           await notification.save();
@@ -104,6 +105,7 @@ const forwardIssue = async (req, res) => {
               issueTitle: issue.title,
               hostel: issue.hostel,
               email: issue.email,
+              issueID: issue._id,
             };
             notification.student.push(SnotificationDetails);
             await notification.save();
@@ -147,6 +149,7 @@ const forwardIssue = async (req, res) => {
             isRead: false,
             issueTitle: issue.title,
             hostel: issue.hostel,
+            issueID: issue._id,
           };
           notification.dsw.push(newNotification);
           await notification.save();
@@ -159,6 +162,7 @@ const forwardIssue = async (req, res) => {
             isRead: false,
             issueTitle: issue.title,
             hostel: issue.hostel,
+            issueID: issue._id,
           };
           notification.supervisor.push(newSupervisorNotification);
           await notification.save();
@@ -172,6 +176,7 @@ const forwardIssue = async (req, res) => {
             issueTitle: issue.title,
             hostel: issue.hostel,
             email: issue.email,
+            issueID: issue._id,
           };
           notification.student.push(sNotification);
           await notification.save();

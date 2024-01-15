@@ -99,6 +99,7 @@ const raiseComplain = async (req, res) => {
               isRead: false,
               issueTitle: issue.title,
               hostel: issue.hostel,
+              issueID: issue._id,
             };
             notification.warden.push(notificationDetails);
             await notification.save();
@@ -111,6 +112,7 @@ const raiseComplain = async (req, res) => {
               isRead: false,
               issueTitle: issue.title,
               hostel: issue.hostel,
+              issueID: issue._id,
             };
             notification.supervisor.push(newSupervisorNotification);
             await notification.save();
@@ -147,6 +149,7 @@ const raiseComplain = async (req, res) => {
               isRead: false,
               issueTitle: issue.title,
               hostel: issue.hostel,
+              issueID: issue._id,
             };
             notification.dsw.push(newNotification);
             await notification.save();
@@ -159,6 +162,7 @@ const raiseComplain = async (req, res) => {
               isRead: false,
               issueTitle: issue.title,
               hostel: issue.hostel,
+              issueID: issue._id,
             };
             notification.warden.push(notificationDetails);
             await notification.save();
@@ -171,6 +175,7 @@ const raiseComplain = async (req, res) => {
               isRead: false,
               issueTitle: issue.title,
               hostel: issue.hostel,
+              issueID: issue._id,
             };
             notification.supervisor.push(newSupervisorNotification);
             await notification.save();

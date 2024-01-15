@@ -71,6 +71,7 @@ const markedAsSolved = async (req, res) => {
               issueTitle: issue.title,
               hostel: issue.hostel,
               email: issue.email,
+              issueID: issue._id,
             };
 
             notification.student.push(Snotification);

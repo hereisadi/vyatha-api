@@ -13,6 +13,7 @@ const NotificationSchema = new mongoose.Schema({
       isRead: Boolean,
       issueTitle: String,
       hostel: String,
+      issueID: String,
     },
   ],
   warden: [
@@ -23,6 +24,7 @@ const NotificationSchema = new mongoose.Schema({
       isRead: Boolean,
       issueTitle: String,
       hostel: String,
+      issueID: String,
     },
   ],
   supervisor: [
@@ -33,6 +35,7 @@ const NotificationSchema = new mongoose.Schema({
       isRead: Boolean,
       issueTitle: String,
       hostel: String,
+      issueID: String,
     },
   ],
   student: [
@@ -44,6 +47,7 @@ const NotificationSchema = new mongoose.Schema({
       issueTitle: String,
       hostel: String,
       email: String,
+      issueID: String,
     },
   ],
 });

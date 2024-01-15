@@ -84,6 +84,7 @@ const approveIssue = (req, res) => {
           isRead: false,
           issueTitle: issue.title,
           hostel: issue.hostel,
+          issueID: issue._id,
         };
         notification.supervisor.push(supervisorNotification);
         await notification.save();
@@ -97,6 +98,7 @@ const approveIssue = (req, res) => {
           issueTitle: issue.title,
           hostel: issue.hostel,
           email: issue.email,
+          issueID: issue._id,
         };
         notification.student.push(sNotification);
         await notification.save();
@@ -135,6 +137,7 @@ const approveIssue = (req, res) => {
           isRead: false,
           issueTitle: issue.title,
           hostel: issue.hostel,
+          issueID: issue._id,
         };
         notification.warden.push(wNotification);
         // saving notification for supervisor's dashboard
@@ -150,6 +153,7 @@ const approveIssue = (req, res) => {
           issueTitle: issue.title,
           hostel: issue.hostel,
           email: issue.email,
+          issueID: issue._id,
         };
         notification.student.push(sNotification);
         await notification.save();
