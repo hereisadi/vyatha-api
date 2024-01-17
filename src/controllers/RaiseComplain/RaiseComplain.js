@@ -13,6 +13,14 @@ const { NotificationModel } = require("../../models/notification/notification");
 
 // NOTE: ONLY role==="student" can raise the complain
 
+// following conditions for the Raise complain button:
+// 1. if the issue is solved, then the button will not be visible (implemented)
+// 2. if the issue is closed, then the button will not be visible (implemented)
+// 3. if the issue is forwarded to warden, then the raise button will raise the issue to dsw only (todo)
+//   as of now we are disablng the raise complaint button if issue has been atleast forwarded to warden
+// 4. if the issue is forwarded to dsw, then the raise button will not be visible (implemented)
+//
+
 const raiseComplain = async (req, res) => {
   verifyToken(req, res, async () => {
     try {
@@ -57,6 +65,12 @@ const raiseComplain = async (req, res) => {
           });
         }
 
+        if (issue.isSolved === true) {
+          return res.status(401).json({
+            error: "Issue is already solved, can't raise complain",
+          });
+        }
+
         if (issue.email !== user.email) {
           return res.status(401).json({
             error: "Not authorized to access this issue",
@@ -72,6 +86,33 @@ const raiseComplain = async (req, res) => {
         // warden
         const SecondComplainTime = issue?.raiseComplainTo[1]?.when;
         const SecondComplainRaisedTo = issue?.raiseComplainTo[1]?.whom;
+
+        if (issue.forwardedTo === "dsw") {
+          return res.status(401).json({
+            error: "Issue has been forwarded to DSW, can't raise complain",
+          });
+        }
+
+        // if (issue.forwardedTo === "warden") {
+        //   if (
+        //     moment(currentTime, "DD-MM-YY h:mma").diff(
+        //       moment(issue.IssueForwardedToWarden[0].time, "DD-MM-YY h:mma"),
+        //       "days"
+        //     ) > 7
+        //   ) {
+        //     issue.raiseComplainTo.push({
+        //       whom: "dsw",
+        //       when: currentTime,
+        //     });
+        //     issue.save();
+        //     return res.status(200).json({ message: "Issue raised to the dsw" });
+        //   } else {
+        //     return res.status(400).json({
+        //       error:
+        //         "Can't raise complain to DSW before 7 days before the timing of the issue forwarded to warden",
+        //     });
+        //   }
+        // }
 
         if (
           issue.raiseComplainTo.length === 1 &&

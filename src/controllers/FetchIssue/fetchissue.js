@@ -22,6 +22,7 @@ const fetchIssues = async (req, res) => {
       const user = await SignUpModel.findById(userId);
 
       if (!user) {
+        console.log("User not found");
         return res.status(404).json({ error: "User not found" });
       }
 
@@ -71,9 +72,17 @@ const fetchIssues = async (req, res) => {
           }
         }
 
+        const allClosedIssues = await IssueRegModel.find({
+          email: user.email,
+          isClosed: true,
+        }).sort({
+          IssueCreatedAt: +1, // sort from newest to oldest; +1 for oldest to newest
+        });
+
         res.status(200).json({
           success: true,
           allIssues,
+          allClosedIssues,
           filteredStudentNotifications,
           allRaisedComplaints,
         });
@@ -123,9 +132,17 @@ const fetchIssues = async (req, res) => {
           }
         );
 
+        const closedIssuesAssignedToSupervisor = await IssueRegModel.find({
+          hostel: user.hostel,
+          isClosed: true,
+        }).sort({
+          IssueForwardedAtToSupervisor: +1, // sort from newest to oldest; +1 for oldest to newest
+        });
+
         res.status(200).json({
           success: true,
           issuesAssignedToSupervisor,
+          closedIssuesAssignedToSupervisor,
           filteredSupervisorNotifications,
           allComplaintsRaisedToSupervisor,
         });
@@ -177,9 +194,19 @@ const fetchIssues = async (req, res) => {
         const allComplaintsRaisedToWarden = allComplains.filter((complain) => {
           return complain.raiseComplainTo.length === 2;
         });
+
+        const closedIssuesAssignedToWarden = await IssueRegModel.find({
+          forwardedTo: { $in: ["warden", "dsw"] },
+          hostel: user.hostel,
+          isClosed: true,
+        }).sort({
+          IssueForwardedAtToWarden: +1,
+        });
+
         res.status(200).json({
           success: true,
           sortedIssues,
+          closedIssuesAssignedToWarden,
           filteredWardenNotifications,
           allComplaintsRaisedToWarden,
         });
@@ -231,9 +258,19 @@ const fetchIssues = async (req, res) => {
         const allComplaintsRaisedToDsw = allComplains.filter((complain) => {
           return complain.raiseComplainTo.length === 3;
         });
+
+        const closedIssuesAssignedToDsw = await IssueRegModel.find({
+          forwardedTo: "dsw",
+          // hostel: user.hostel,
+          isClosed: true,
+        }).sort({
+          IssueForwardedAtToDsw: +1,
+        });
+
         res.status(200).json({
           success: true,
           sortedIssues,
+          closedIssuesAssignedToDsw,
           filteredDswNotifications,
           allComplaintsRaisedToDsw,
         });
@@ -246,9 +283,16 @@ const fetchIssues = async (req, res) => {
           }
         );
 
+        const AllClosedissues = await IssueRegModel.find({
+          isClosed: true,
+        }).sort({
+          IssueCreatedAt: +1, // sort from newest to oldest; +1 for oldest to newest
+        });
+
         res.status(200).json({
           sucess: true,
           AllRegissues,
+          AllClosedissues,
         });
       } else {
         return res.status(401).json({
