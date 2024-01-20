@@ -32,14 +32,12 @@ const addComment = async (req, res) => {
 
       if (
         user.email === issue.email || // for student who created the issue
-        // user.role === "supervisor" ||
-        // user.role === "warden" ||
-        // user.role === "dsw" ||
-
         // in the below logic if an issue has been forwarded to warden, then supervisor can't add comment
         (user.role === issue.forwardedTo && user.hostel === issue.hostel) || // for those who have been assigned the issue
-        user.role === "superadmin"
-
+        user.role === "superadmin" || // vyatha team
+        (issue.forwardedTo === "warden" && user.role === "supervisor") ||
+        (issue.forwardedTo === "dsw" &&
+          (user.role === "supervisor" || user.role === "warden"))
         // user.role==="student" || issue.
       ) {
         const { commentBody } = req.body; // client should send commentBody as payload

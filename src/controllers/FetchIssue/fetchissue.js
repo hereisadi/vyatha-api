@@ -76,7 +76,7 @@ const fetchIssues = async (req, res) => {
           email: user.email,
           isClosed: true,
         }).sort({
-          IssueCreatedAt: +1, // sort from newest to oldest; +1 for oldest to newest
+          closedAt: -1, // sort from newest to oldest; +1 for oldest to newest
         });
 
         res.status(200).json({
@@ -136,7 +136,7 @@ const fetchIssues = async (req, res) => {
           hostel: user.hostel,
           isClosed: true,
         }).sort({
-          IssueForwardedAtToSupervisor: +1, // sort from newest to oldest; +1 for oldest to newest
+          closedAt: -1, // sort from newest to oldest; +1 for oldest to newest
         });
 
         res.status(200).json({
@@ -200,7 +200,7 @@ const fetchIssues = async (req, res) => {
           hostel: user.hostel,
           isClosed: true,
         }).sort({
-          IssueForwardedAtToWarden: +1,
+          closedAt: -1,
         });
 
         res.status(200).json({
@@ -264,7 +264,7 @@ const fetchIssues = async (req, res) => {
           // hostel: user.hostel,
           isClosed: true,
         }).sort({
-          IssueForwardedAtToDsw: +1,
+          closedAt: -1,
         });
 
         res.status(200).json({
@@ -286,7 +286,7 @@ const fetchIssues = async (req, res) => {
         const AllClosedissues = await IssueRegModel.find({
           isClosed: true,
         }).sort({
-          IssueCreatedAt: +1, // sort from newest to oldest; +1 for oldest to newest
+          closedAt: -1, // sort from newest to oldest; +1 for oldest to newest
         });
 
         res.status(200).json({
