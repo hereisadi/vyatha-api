@@ -22,7 +22,3 @@ const check7DayDifference = (firstTime, secondTime) => {
 module.exports = {
   check7DayDifference,
 };
-
-const firstComplainTime = "16-03-2024 19:39";
-const currentTime = "23-03-2024 19:38"; // Adjusted to be more than 7 days apart
-console.log(check7DayDifference(firstComplainTime, currentTime));

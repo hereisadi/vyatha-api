@@ -79,7 +79,7 @@ const issueReg = async (req, res) => {
             title,
             category,
             phone,
-            defaultRaiseTo,
+            raiseComplainTo: defaultRaiseTo,
             idcard,
           });
 
