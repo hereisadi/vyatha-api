@@ -38,10 +38,10 @@ const raiseComplain = async (req, res) => {
 
       if (user.role === "student") {
         let { issueID, otherID, currentTime } = req.body;
-        if (!issueID || !otherID) {
-          return res
-            .status(400)
-            .json({ error: "Please provide issue ID and otherID" });
+        if (!issueID || !otherID || !currentTime) {
+          return res.status(400).json({
+            error: "Please provide issue ID and otherID and currentTime",
+          });
         }
         issueID = issueID?.toString().trim();
         otherID = otherID?.toString().trim();
@@ -114,6 +114,9 @@ const raiseComplain = async (req, res) => {
         //     });
         //   }
         // }
+        console.log("firstComplainTime :", firstComplainTime);
+        console.log("SecondComplainTime :", SecondComplainTime);
+        console.log("currentTime:", currentTime);
 
         const value = check7DayDifference(firstComplainTime, currentTime);
         const secondCheckValue = check7DayDifference(

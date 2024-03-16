@@ -1,4 +1,5 @@
 const addOneHour = (linkSendAt) => {
+  linkSendAt = linkSendAt?.toString();
   let [datePart, timePart] = linkSendAt.split(" ");
   let [day, month, year] = datePart.split("-");
   let [hour, minute] = timePart.split(":");

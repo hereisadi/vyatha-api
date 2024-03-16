@@ -1,4 +1,6 @@
 const check7DayDifference = (firstTime, secondTime) => {
+  firstTime = firstTime?.toString();
+  secondTime = secondTime?.toString();
   const formatDate = (dateString) => {
     const [datePart, timePart] = dateString.split(" ");
     const [day, month, year] = datePart.split("-");
