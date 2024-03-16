@@ -1,6 +1,6 @@
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const bcrypt = require("bcrypt");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 const emailValidator = require("../../utils/EmailValidation");
 const passwordValidator = require("../../utils/PasswordValidation");
 const { sendEmail } = require("../../utils/EmailService");
@@ -22,6 +22,7 @@ const signup = async (req, res) => {
   emailValidator(req, res, async () => {
     passwordValidator(req, res, async () => {
       try {
+        const { currentTime } = req.body;
         let { name, email, password, cpassword, designation, phone } = req.body; // client should name, email, password, cpassword, hostel and designation as payload
         if (
           !name ||
@@ -80,9 +81,7 @@ const signup = async (req, res) => {
             email,
             name,
             password: hashPwd,
-            accountCreatedAt: moment
-              .tz("Asia/Kolkata")
-              .format("DD-MM-YY h:mma"),
+            accountCreatedAt: currentTime,
             hostel,
             scholarID,
             phone,
@@ -113,9 +112,7 @@ const signup = async (req, res) => {
             email,
             name,
             password: hashPwd,
-            accountCreatedAt: moment
-              .tz("Asia/Kolkata")
-              .format("DD-MM-YY h:mma"),
+            accountCreatedAt: currentTime,
             hostel,
             phone,
             designation,
@@ -137,9 +134,7 @@ const signup = async (req, res) => {
             email,
             name,
             password: hashPwd,
-            accountCreatedAt: moment
-              .tz("Asia/Kolkata")
-              .format("DD-MM-YY h:mma"),
+            accountCreatedAt: currentTime,
             phone,
             designation,
           });

@@ -1,7 +1,7 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 
 // after the issue has been edited, there is no need to send the notifications to supervisor, or warden, or dsw. There should be just one label, that the issue has been edited at this time
 
@@ -27,7 +27,7 @@ const editComplaint = (req, res) => {
       }
 
       if (user.role === "student") {
-        const { photo } = req.body;
+        const { photo, editedAt } = req.body;
         let { description, category, title, issueID } = req.body;
 
         if (!description && !photo && !category && !title) {
@@ -87,13 +87,13 @@ const editComplaint = (req, res) => {
           issue.photo = photo;
         }
 
-        const currentTime = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
+        // const currentTime = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
         if (issue.isIssueEdited === false) {
           issue.isIssueEdited = true;
         }
 
         issue.editIssue.push({
-          editedAt: currentTime,
+          editedAt: editedAt,
         });
         await issue.save();
         return res.status(200).json({ message: "Issue updated successfully" });

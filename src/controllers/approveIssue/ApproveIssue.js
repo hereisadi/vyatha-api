@@ -2,7 +2,7 @@ const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
 const { NotificationModel } = require("../../models/notification/notification");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 const { v4: uuidv4 } = require("uuid");
 
 // PUT approve issue
@@ -25,7 +25,7 @@ const approveIssue = (req, res) => {
         return res.status(404).json({ error: "User not found" });
       }
 
-      const { issueID, otherID } = req.body; //client should send issueID as payload
+      const { issueID, otherID, time } = req.body; //client should send issueID as payload
 
       if (!otherID || !issueID) {
         return res.status(400).json({
@@ -79,7 +79,7 @@ const approveIssue = (req, res) => {
         // saving notification for supervisor's dashboard
         const supervisorNotification = {
           id: uuidv4(),
-          time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          time,
           message: `Issue has been approved by the Warden of ${user.hostel}`,
           isRead: false,
           issueTitle: issue.title,
@@ -92,7 +92,7 @@ const approveIssue = (req, res) => {
         // student notification
         const sNotification = {
           id: uuidv4(),
-          time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          time,
           message: `Issue has been approved by the Warden of ${user.hostel}`,
           isRead: false,
           issueTitle: issue.title,
@@ -132,7 +132,7 @@ const approveIssue = (req, res) => {
         // saving notification for warden's dashboard
         const wNotification = {
           id: uuidv4(),
-          time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          time,
           message: `Issue has been approved by the DSW`,
           isRead: false,
           issueTitle: issue.title,
@@ -147,7 +147,7 @@ const approveIssue = (req, res) => {
         // student notification
         const sNotification = {
           id: uuidv4(),
-          time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          time,
           message: `Your Issue has been approved by the DSW`,
           isRead: false,
           issueTitle: issue.title,

@@ -1,7 +1,7 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 const { v4: uuidv4 } = require("uuid");
 const { NotificationModel } = require("../../models/notification/notification");
 
@@ -26,7 +26,7 @@ const closeIssue = async (req, res) => {
       }
 
       if (user.role === "student") {
-        const { issueId, otherID } = req.body;
+        const { issueId, otherID, closedAt } = req.body;
         if (!issueId || !otherID) {
           return res.status(400).json({ error: "payload missing" });
         }
@@ -57,12 +57,12 @@ const closeIssue = async (req, res) => {
         if (issue.email === user.email) {
           if (issue.isClosed === false) {
             issue.isClosed = true;
-            issue.closedAt = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
+            issue.closedAt = closedAt;
             await issue.save();
 
             const supervisorNotification = {
               id: uuidv4(),
-              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              time: closedAt,
               message: `Issue has been closed by the student of ${user.hostel}`,
               isRead: false,
               issueTitle: issue.title,
@@ -78,7 +78,7 @@ const closeIssue = async (req, res) => {
               // saving notification for warden's dashboard
               const wNotification = {
                 id: uuidv4(),
-                time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+                time: closedAt,
                 message: `Issue has been closed by the student of ${user.hostel}`,
                 isRead: false,
                 issueTitle: issue.title,
@@ -92,7 +92,7 @@ const closeIssue = async (req, res) => {
             if (issue.forwardedTo === "dsw") {
               const newNotification = {
                 id: uuidv4(),
-                time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+                time: closedAt,
                 message: `Issue has been closed by the student of ${user.hostel}`,
                 isRead: false,
                 issueTitle: issue.title,
@@ -104,7 +104,7 @@ const closeIssue = async (req, res) => {
 
               const wNotification = {
                 id: uuidv4(),
-                time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+                time: closedAt,
                 message: `Issue has been closed by the student of ${user.hostel}`,
                 isRead: false,
                 issueTitle: issue.title,
@@ -132,7 +132,7 @@ const closeIssue = async (req, res) => {
           });
         }
       } else if (user.role === "supervisor") {
-        const { issueId, otherID } = req.body;
+        const { issueId, otherID, closedAt } = req.body;
         if (!issueId || !otherID) {
           return res.status(400).json({ error: "payload missing" });
         }
@@ -163,14 +163,13 @@ const closeIssue = async (req, res) => {
         if (issue.isClosed === false) {
           if (user.hostel === issue.hostel) {
             issue.isClosed = true;
-            issue.closedAt = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
-            await issue.save();
+            (issue.closedAt = closedAt), await issue.save();
 
             // send notification to the student that your issue has been closed by the supervisor
             // student notification
             const Snotification = {
               id: uuidv4(),
-              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              time: closedAt,
               message: `Issue has been closed by the Supervisor of ${issue.hostel}`,
               isRead: false,
               issueTitle: issue.title,

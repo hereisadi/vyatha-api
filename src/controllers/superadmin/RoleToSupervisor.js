@@ -1,6 +1,6 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 // put request
 
 // PUT promote to supervisor role
@@ -26,7 +26,7 @@ const roleToSupervisor = (req, res) => {
       const { role } = user;
 
       if (role === "superadmin") {
-        const { accountID } = req.body; // client should send accountID as payload
+        const { accountID, currentTime } = req.body; // client should send accountID as payload
         const account = await SignUpModel.findById(accountID);
         if (!account) {
           return res.status(401).json({
@@ -38,9 +38,7 @@ const roleToSupervisor = (req, res) => {
 
         if (account.role === "student") {
           account.role = "supervisor";
-          account.rolePromotedAt = moment
-            .tz("Asia/Kolkata")
-            .format("DD-MM-YY h:mma");
+          account.rolePromotedAt = currentTime;
           await account.save();
           res.status(200).json({
             success: true,

@@ -1,7 +1,7 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 const { v4: uuidv4 } = require("uuid");
 
 // POST to add comment
@@ -40,7 +40,7 @@ const addComment = async (req, res) => {
           (user.role === "supervisor" || user.role === "warden"))
         // user.role==="student" || issue.
       ) {
-        const { commentBody } = req.body; // client should send commentBody as payload
+        const { commentBody, createdAt } = req.body; // client should send commentBody as payload
 
         if (!issue) {
           return res.status(401).json({
@@ -70,7 +70,7 @@ const addComment = async (req, res) => {
           author: user.name,
           authorpic: user.profilepic,
           commentBody,
-          createdAt: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+          createdAt: createdAt,
           authoremail: user.email,
           commentId: uuidv4(),
         };

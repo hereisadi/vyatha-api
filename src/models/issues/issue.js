@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 // const uniqueID = require("../../utils/uniqueid")
 
 const IssueRegSchema = new mongoose.Schema({
@@ -62,12 +62,12 @@ const IssueRegSchema = new mongoose.Schema({
         },
       },
     ],
-    default: [
-      {
-        whom: "supervisor",
-        when: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-      },
-    ],
+    // default: [
+    //   {
+    //     whom: "supervisor",
+    //     when: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+    //   },
+    // ],
   },
   IssueCreatedAt: {
     type: String,

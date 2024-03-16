@@ -1,7 +1,7 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 const { NotificationModel } = require("../../models/notification/notification");
 const { v4: uuidv4 } = require("uuid");
 
@@ -31,7 +31,7 @@ const forwardIssue = async (req, res) => {
       }
 
       // accessing payload
-      const { issueID, reasonForForwarding, otherID } = req.body; // client should send issueID, reasonForForwarding and otherID as payload
+      const { issueID, reasonForForwarding, otherID, forwardedAt } = req.body; // client should send issueID, reasonForForwarding and otherID as payload
 
       if (!issueID || !reasonForForwarding || !otherID) {
         return res.status(400).json({
@@ -67,7 +67,7 @@ const forwardIssue = async (req, res) => {
         if (issue.forwardedTo === "supervisor") {
           issue.forwardedTo = "warden";
           const forwardDetails = {
-            time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+            time: forwardedAt,
             reasonForForwarding: reasonForForwarding,
           };
 
@@ -77,7 +77,7 @@ const forwardIssue = async (req, res) => {
           // WARDEN NOTIFICATION
           const notificationDetails = {
             id: uuidv4(),
-            time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+            time: forwardedAt,
             message: `New Issue has been forwarded to you by the supervisor of ${user.hostel}`,
             isRead: false,
             issueTitle: issue.title,
@@ -99,7 +99,7 @@ const forwardIssue = async (req, res) => {
           } else {
             const SnotificationDetails = {
               id: issue._id,
-              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              time: forwardedAt,
               message: `Your Issue has been forwarded to the warden of ${user.hostel} by the Supervisor`,
               isRead: false,
               issueTitle: issue.title,
@@ -135,7 +135,7 @@ const forwardIssue = async (req, res) => {
           issue.forwardedTo = "dsw";
 
           const forwardDetails = {
-            time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+            time: forwardedAt,
             reasonForForwarding: reasonForForwarding,
           };
           issue.IssueForwardedToDsw.push(forwardDetails);
@@ -144,7 +144,7 @@ const forwardIssue = async (req, res) => {
           // DSW NOTIFICATION
           const newNotification = {
             id: uuidv4(),
-            time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+            time: forwardedAt,
             message: `New Issue has been forwarded to you by the warden of ${user.hostel}`,
             isRead: false,
             issueTitle: issue.title,
@@ -157,7 +157,7 @@ const forwardIssue = async (req, res) => {
           // SUPERVISOR NOTIFICATION
           const newSupervisorNotification = {
             id: uuidv4(),
-            time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+            time: forwardedAt,
             message: `Issue has been forwarded to the DSW by the warden of ${user.hostel}`,
             isRead: false,
             issueTitle: issue.title,
@@ -170,7 +170,7 @@ const forwardIssue = async (req, res) => {
           // STUDENT NOTIFICATION
           const sNotification = {
             id: uuidv4(),
-            time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+            time: forwardedAt,
             message: `Your Issue has been forwarded to the DSW of ${user.hostel} by the Warden`,
             isRead: false,
             issueTitle: issue.title,

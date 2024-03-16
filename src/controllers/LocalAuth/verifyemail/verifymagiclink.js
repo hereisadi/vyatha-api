@@ -1,5 +1,5 @@
 const { SignUpModel } = require("../../../models/Localauth/Signup");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 
 // PUT req to verify magic link
 // access: public
@@ -10,6 +10,7 @@ const moment = require("moment-timezone");
 const verifyMagicLink = async (req, res) => {
   try {
     let token = req.params.token;
+    const { currentTime } = req.params;
     if (!token) {
       return res.status(400).json({ message: "Token missing" });
     }
@@ -29,7 +30,6 @@ const verifyMagicLink = async (req, res) => {
     }
 
     const tokenExpiration = user.tokenExpiration;
-    const currentTime = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
     if (currentTime > tokenExpiration) {
       return res.status(400).json({ message: "Token expired" });
     } else {

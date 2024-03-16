@@ -1,7 +1,7 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 const uniqueid = require("../../utils/uniqueid");
 const { NotificationModel } = require("../../models/notification/notification");
 // post request
@@ -46,7 +46,7 @@ const issueReg = async (req, res) => {
             error: "You must verify your email to submit an issue",
           });
         } else {
-          const { photo } = req.body;
+          const { photo, IssueCreatedAt } = req.body;
           let { description, category, title } = req.body; // client should send description, photo and category as payload
 
           if (!description || !photo || !category || !title) {
@@ -59,6 +59,12 @@ const issueReg = async (req, res) => {
           category = category?.toString().trim();
           title = title?.toString().trim();
 
+          const defaultRaiseTo = [
+            {
+              whom: "supervisor",
+              when: IssueCreatedAt,
+            },
+          ];
           const issueRegistration = new IssueRegModel({
             name,
             email,
@@ -67,14 +73,13 @@ const issueReg = async (req, res) => {
             hostel,
             room,
             scholarID,
-            IssueCreatedAt: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-            IssueForwardedAtToSupervisor: moment
-              .tz("Asia/Kolkata")
-              .format("DD-MM-YY h:mma"),
+            IssueCreatedAt,
+            IssueForwardedAtToSupervisor: IssueCreatedAt,
             otherID: randomGeneratedID,
             title,
             category,
             phone,
+            defaultRaiseTo,
             idcard,
           });
 

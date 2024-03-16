@@ -1,5 +1,5 @@
 const { SignUpModel } = require("../../models/Localauth/Signup");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 const bcrypt = require("bcrypt");
 const { sendEmail } = require("../../utils/EmailService");
 
@@ -15,7 +15,7 @@ const { sendEmail } = require("../../utils/EmailService");
 
 const resetPassword = async (req, res) => {
   try {
-    const { password, confirmPassword } = req.body;
+    const { password, confirmPassword, currentTime } = req.body;
     let { token } = req.params;
 
     if (!password || !confirmPassword || !token) {
@@ -44,7 +44,7 @@ const resetPassword = async (req, res) => {
 
     // check if token is expired
     const tokenExpiration = user.tokenExpiration;
-    const currentTime = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
+    // const currentTime = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
     if (tokenExpiration < currentTime) {
       return res.status(400).json({ error: "Token expired" });
     } else {

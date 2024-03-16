@@ -1,8 +1,9 @@
 const { SignUpModel } = require("../../../models/Localauth/Signup");
 const { sendEmail } = require("../../../utils/EmailService");
 const { verifyToken } = require("../../../middlewares/VerifyToken");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 const crypto = require("crypto");
+const { addOneHour } = require("../../../lib/expireTime");
 
 // POST req to send magic link
 // access: private i.e after signup user will be required to login to verify their email address
@@ -28,13 +29,12 @@ const sendMagicLink = async (req, res) => {
         return res.status(400).json({ message: "Email already verified" });
       }
 
+      const { linkSendAt } = req.body;
       const Email = user.email.toString().trim();
 
       const token = crypto.randomBytes(32).toString("hex");
-      const tokenExpiration = moment
-        .tz("Asia/Kolkata")
-        .add(1, "hour")
-        .format("DD-MM-YY h:mma");
+      const tokenExpireTime = addOneHour(linkSendAt);
+      const tokenExpiration = tokenExpireTime;
 
       if (!token || !tokenExpiration) {
         return res.status(400).json({ message: "Error in generating token" });

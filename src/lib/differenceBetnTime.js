@@ -1,0 +1,28 @@
+const check7DayDifference = (firstTime, secondTime) => {
+  const formatDate = (dateString) => {
+    const [datePart, timePart] = dateString.split(" ");
+    const [day, month, year] = datePart.split("-");
+    const [hour, minute] = timePart.split(":");
+    return new Date(year, month - 1, day, hour, minute);
+  };
+
+  const date1 = formatDate(firstTime);
+  const date2 = formatDate(secondTime);
+
+  const differenceInMilliseconds = Math.abs(date2 - date1);
+  const millisecondsIn7Days = 7 * 24 * 60 * 60 * 1000;
+
+  if (differenceInMilliseconds > millisecondsIn7Days) {
+    return "yes";
+  } else {
+    return "no";
+  }
+};
+
+module.exports = {
+  check7DayDifference,
+};
+
+const firstComplainTime = "16-03-2024 19:39";
+const currentTime = "23-03-2024 19:38"; // Adjusted to be more than 7 days apart
+console.log(check7DayDifference(firstComplainTime, currentTime));

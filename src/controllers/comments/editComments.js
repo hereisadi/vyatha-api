@@ -1,7 +1,7 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 
 //PUT to edit comment
 //access:private
@@ -24,7 +24,7 @@ const editComment = (req, res) => {
 
       const { issueID } = req.params; // client should send issueID as params
       const { commentID } = req.params; // client should send commentID as params
-      const { commentBody } = req.body; // client should send commentBody as payload
+      const { commentBody, editedAt } = req.body; // client should send commentBody as payload
 
       const issue = await IssueRegModel.findById(issueID);
       if (!issue) {
@@ -45,9 +45,7 @@ const editComment = (req, res) => {
           //edit the comment
           if (commentBody) {
             thatParticularCommentItem.commentBody = commentBody;
-            thatParticularCommentItem.editedAt = moment
-              .tz("Asia/Kolkata")
-              .format("DD-MM-YY h:mma");
+            thatParticularCommentItem.editedAt = editedAt;
 
             await issue.save();
             res.status(200).json({

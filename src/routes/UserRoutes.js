@@ -100,7 +100,7 @@ router.put("/editprofile", editPrfoile);
 router.put("/closeissue", closeIssue);
 router.put("/editcomment/:issueID/:commentID", editComment);
 router.put("/approveissue", approveIssue);
-router.put("/verifyemail/:token", verifyMagicLink);
+router.put("/verifyemail/:token/:currentTime", verifyMagicLink);
 router.put("/studentdeleteaccount", studentDeleteAccount);
 router.put("/editissue", editComplaint);
 

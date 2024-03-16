@@ -1,7 +1,7 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 const { NotificationModel } = require("../../models/notification/notification");
 const { v4: uuidv4 } = require("uuid");
 
@@ -28,7 +28,7 @@ const markedAsSolved = async (req, res) => {
 
       // SUPERVISOR
       if (user.role === "supervisor") {
-        const { issueID, otherID } = req.body; // client should send issueID as payload
+        const { issueID, otherID, solvedAt } = req.body; // client should send issueID as payload
         if (!issueID || !otherID) {
           return res.status(400).json({
             error: "payload missing",
@@ -59,13 +59,13 @@ const markedAsSolved = async (req, res) => {
         if (issue.hostel === user.hostel) {
           if (issue.isSolved === false) {
             issue.isSolved = true; // marked as solved
-            issue.solvedAt = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"); // save time
+            issue.solvedAt = solvedAt;
             await issue.save();
 
             // student notification
             const Snotification = {
               id: uuidv4(),
-              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              time: solvedAt,
               message: `Issue has been Solved by the Supervisor of ${issue.hostel}`,
               isRead: false,
               issueTitle: issue.title,

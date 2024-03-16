@@ -1,9 +1,10 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 const { IssueRegModel } = require("../../models/issues/issue");
 const { v4: uuidv4 } = require("uuid");
 const { NotificationModel } = require("../../models/notification/notification");
+const { check7DayDifference } = require("../../lib/differenceBetnTime");
 
 // access: private
 // endpoint: /raiseComplain
@@ -36,7 +37,7 @@ const raiseComplain = async (req, res) => {
       }
 
       if (user.role === "student") {
-        let { issueID, otherID } = req.body;
+        let { issueID, otherID, currentTime } = req.body;
         if (!issueID || !otherID) {
           return res
             .status(400)
@@ -77,7 +78,7 @@ const raiseComplain = async (req, res) => {
           });
         }
 
-        const currentTime = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
+        // const currentTime = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
 
         //supervisor by default
         const firstComplainTime = issue?.raiseComplainTo[0]?.when;
@@ -114,15 +115,22 @@ const raiseComplain = async (req, res) => {
         //   }
         // }
 
+        const value = check7DayDifference(firstComplainTime, currentTime);
+        const secondCheckValue = check7DayDifference(
+          SecondComplainTime,
+          currentTime
+        );
+
         if (
           issue.raiseComplainTo.length === 1 &&
           firstComplainRaisedTo === "supervisor"
         ) {
           if (
-            moment(currentTime, "DD-MM-YY h:mma").diff(
-              moment(firstComplainTime, "DD-MM-YY h:mma"),
-              "days"
-            ) > 7
+            // moment(currentTime, "DD-MM-YY h:mma").diff(
+            //   moment(firstComplainTime, "DD-MM-YY h:mma"),
+            //   "days"
+            // ) > 7
+            value === "yes"
           ) {
             issue.raiseComplainTo.push({
               whom: "warden",
@@ -135,7 +143,7 @@ const raiseComplain = async (req, res) => {
             // WARDEN NOTIFICATION
             const notificationDetails = {
               id: uuidv4(),
-              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              time: currentTime,
               message: `New Issue has been raised to you by the student of ${user.hostel}`,
               isRead: false,
               issueTitle: issue.title,
@@ -148,8 +156,8 @@ const raiseComplain = async (req, res) => {
             // SUPERVISOR NOTIFICATION
             const newSupervisorNotification = {
               id: uuidv4(),
-              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-              message: `Issue has been raised to the Warden by the student of ${user.hostel}`,
+              time: currentTime,
+              message: `New Issue has been raised to the Warden by the student of ${user.hostel}`,
               isRead: false,
               issueTitle: issue.title,
               hostel: issue.hostel,
@@ -171,10 +179,11 @@ const raiseComplain = async (req, res) => {
           SecondComplainRaisedTo === "warden"
         ) {
           if (
-            moment(currentTime, "DD-MM-YY h:mma").diff(
-              moment(SecondComplainTime, "DD-MM-YY h:mma"),
-              "days"
-            ) > 7
+            // moment(currentTime, "DD-MM-YY h:mma").diff(
+            //   moment(SecondComplainTime, "DD-MM-YY h:mma"),
+            //   "days"
+            // ) > 7
+            secondCheckValue === "yes"
           ) {
             issue.raiseComplainTo.push({
               whom: "dsw",
@@ -185,7 +194,7 @@ const raiseComplain = async (req, res) => {
             // DSW NOTIFICATION
             const newNotification = {
               id: uuidv4(),
-              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              time: currentTime,
               message: `New Issue has been raised to you by the student of ${user.hostel}`,
               isRead: false,
               issueTitle: issue.title,
@@ -198,7 +207,7 @@ const raiseComplain = async (req, res) => {
             // Warden NOTIFICATION
             const notificationDetails = {
               id: uuidv4(),
-              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
+              time: currentTime,
               message: `New Issue has been raised to the DSW by the student of ${user.hostel}`,
               isRead: false,
               issueTitle: issue.title,
@@ -211,8 +220,8 @@ const raiseComplain = async (req, res) => {
             // SUPERVISOR NOTIFICATION
             const newSupervisorNotification = {
               id: uuidv4(),
-              time: moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma"),
-              message: `Issue has been raised to the DSW by the student of ${user.hostel}`,
+              time: currentTime,
+              message: `New Issue has been raised to the DSW by the student of ${user.hostel}`,
               isRead: false,
               issueTitle: issue.title,
               hostel: issue.hostel,

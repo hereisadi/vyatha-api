@@ -2,7 +2,8 @@ const crypto = require("crypto");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { sendEmail } = require("../../utils/EmailService");
 // const emailValidator = require("../../utils/EmailValidation");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
+const { addOneHour } = require("../../lib/expireTime");
 
 // POST req to forgot password
 // access: public
@@ -15,7 +16,7 @@ const moment = require("moment-timezone");
 const forgotPwd = async (req, res) => {
   // emailValidator(req, res, async () => {
   try {
-    const { email } = req.body;
+    const { email, linkSentAt } = req.body;
     if (!email) {
       return res.status(400).json({ error: "Email is required" });
     }
@@ -29,10 +30,7 @@ const forgotPwd = async (req, res) => {
     // genertaing token using crypto
     const resetToken = crypto.randomBytes(32).toString("hex");
     //   const tokenExpiration = new Date(Date.now() + 3600000); // token valid for 60 minutes
-    const tokenExpiration = moment
-      .tz("Asia/Kolkata")
-      .add(1, "hour")
-      .format("DD-MM-YY h:mma");
+    const tokenExpiration = addOneHour(linkSentAt);
 
     if (!resetToken || !tokenExpiration) {
       return res.status(400).json({ error: "Error in generating token" });
