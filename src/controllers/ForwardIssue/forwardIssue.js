@@ -72,6 +72,7 @@ const forwardIssue = async (req, res) => {
           };
 
           issue.IssueForwardedToWarden.push(forwardDetails);
+          issue.IssueForwardedAtToWarden = forwardedAt;
           await issue.save();
 
           // WARDEN NOTIFICATION
@@ -139,6 +140,7 @@ const forwardIssue = async (req, res) => {
             reasonForForwarding: reasonForForwarding,
           };
           issue.IssueForwardedToDsw.push(forwardDetails);
+          issue.IssueForwardedAtToDsw = forwardedAt;
           await issue.save();
 
           // DSW NOTIFICATION

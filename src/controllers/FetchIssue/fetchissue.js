@@ -1,7 +1,7 @@
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
-const moment = require("moment-timezone");
+// const moment = require("moment-timezone");
 const { NotificationModel } = require("../../models/notification/notification");
 
 // get request to fetch all the issues for student, warden, supervisor, dsw and superadmin
@@ -11,6 +11,7 @@ const { NotificationModel } = require("../../models/notification/notification");
 // access: private
 // endpoint: /fetchissues
 
+// sorting is done on the basis of issues creation time for student, and forwarding time for supervisor,warden and dsw
 const fetchIssues = async (req, res) => {
   verifyToken(req, res, async () => {
     try {
@@ -34,7 +35,7 @@ const fetchIssues = async (req, res) => {
           email: user.email,
           isClosed: false,
         }).sort({
-          IssueCreatedAt: 1, // sort oldest to newest
+          IssueCreatedAt: -1, // sort newest to oldest
         });
 
         const allNotifications = await NotificationModel.find({});
@@ -99,9 +100,7 @@ const fetchIssues = async (req, res) => {
           IssueForwardedAtToSupervisor: +1, //  +1 for oldest to newest
         });
 
-        const allNotifications = await NotificationModel.find({}).sort({
-          time: 1,
-        });
+        const allNotifications = await NotificationModel.find({});
 
         const superVisorData = [];
 
@@ -149,32 +148,16 @@ const fetchIssues = async (req, res) => {
 
         // for warden
       } else if (user.role === "warden") {
-        const issuesAssignedToWarden = await IssueRegModel.find({
+        const sortedIssues = await IssueRegModel.find({
           forwardedTo: { $in: ["warden", "dsw"] },
           hostel: user.hostel,
           isClosed: false,
-        });
-        // .sort({
-        //   IssueForwardedAtToWarden: +1,
-        // });
-
-        // EXPERIMENTAL MAY NOT WORK
-        const sortedIssues = issuesAssignedToWarden.sort((a, b) => {
-          // return new Date(b.IssueForwardedToWarden.time) - new Date(a.IssueForwardedToWarden.time);
-          const timeA = moment
-            .tz(a.IssueForwardedToWarden.time, "DD-MM-YY h:mma", "Asia/Kolkata")
-            .toDate();
-
-          const timeB = moment
-            .tz(b.IssueForwardedToWarden.time, "DD-MM-YY h:mma", "Asia/Kolkata")
-            .toDate();
-          return timeA - timeB;
+        }).sort({
+          IssueForwardedAtToWarden: +1, //  +1 for oldest to newest
         });
 
         // FETCHING NOTIFICATIONS FOR WARDEN
-        const allNotifications = await NotificationModel.find({}).sort({
-          time: 1,
-        });
+        const allNotifications = await NotificationModel.find({});
 
         const wardenData = [];
 
@@ -191,16 +174,20 @@ const fetchIssues = async (req, res) => {
 
         // console.log(filteredWardenNotifications.length);
 
-        const allComplaintsRaisedToWarden = allComplains.filter((complain) => {
-          return complain.raiseComplainTo.length === 2;
-        });
+        const allComplaintsRaisedToWarden = allComplains
+          .filter((complain) => {
+            return complain.raiseComplainTo.length === 2;
+          })
+          .sort({
+            IssueRaisedToWardenTime: 1, // oldest to newest
+          });
 
         const closedIssuesAssignedToWarden = await IssueRegModel.find({
           forwardedTo: { $in: ["warden", "dsw"] },
           hostel: user.hostel,
           isClosed: true,
         }).sort({
-          closedAt: -1,
+          closedAt: -1, // newest to oldest
         });
 
         res.status(200).json({
@@ -213,32 +200,16 @@ const fetchIssues = async (req, res) => {
 
         // for dsw
       } else if (user.role === "dsw") {
-        const issuesAssignedToDsw = await IssueRegModel.find({
+        const sortedIssues = await IssueRegModel.find({
           forwardedTo: "dsw",
           // hostel: user.hostel,
           isClosed: false,
-        });
-        // .sort({
-        //   IssueForwardedAtToDsw: +1,
-        // });
-
-        // EXPERIMENTAL MAY NOT WORK
-        const sortedIssues = issuesAssignedToDsw.sort((a, b) => {
-          // return new Date(b.IssueForwardedToWarden.time) - new Date(a.IssueForwardedToWarden.time);
-          const timeA = moment
-            .tz(a.IssueForwardedToDsw.time, "DD-MM-YY h:mma", "Asia/Kolkata")
-            .toDate();
-
-          const timeB = moment
-            .tz(b.IssueForwardedToDsw.time, "DD-MM-YY h:mma", "Asia/Kolkata")
-            .toDate();
-          return timeA - timeB;
+        }).sort({
+          IssueForwardedAtToDsw: +1, // oldest to newest
         });
 
         // FETCHING NOTIFICATIONS FOR DSW
-        const allNotifications = await NotificationModel.find({}).sort({
-          time: 1,
-        });
+        const allNotifications = await NotificationModel.find({});
 
         const dswData = [];
 
@@ -255,16 +226,20 @@ const fetchIssues = async (req, res) => {
 
         const filteredDswNotifications = dswData;
 
-        const allComplaintsRaisedToDsw = allComplains.filter((complain) => {
-          return complain.raiseComplainTo.length === 3;
-        });
+        const allComplaintsRaisedToDsw = allComplains
+          .filter((complain) => {
+            return complain.raiseComplainTo.length === 3;
+          })
+          .sort({
+            IssueRaisedToDswTime: +1, // oldest to newest
+          });
 
         const closedIssuesAssignedToDsw = await IssueRegModel.find({
           forwardedTo: "dsw",
           // hostel: user.hostel,
           isClosed: true,
         }).sort({
-          closedAt: -1,
+          closedAt: -1, // newest to oldest
         });
 
         res.status(200).json({

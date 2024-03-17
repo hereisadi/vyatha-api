@@ -140,6 +140,7 @@ const raiseComplain = async (req, res) => {
               whom: "warden",
               when: currentTime,
             });
+            issue.IssueRaisedToWardenTime = currentTime;
             issue.save();
 
             // send notifcation to the warden and supervisor
@@ -193,6 +194,7 @@ const raiseComplain = async (req, res) => {
               whom: "dsw",
               when: currentTime,
             });
+            issue.IssueRaisedToDswTime = currentTime;
             issue.save();
 
             // DSW NOTIFICATION

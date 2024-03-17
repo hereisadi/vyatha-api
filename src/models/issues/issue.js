@@ -78,6 +78,14 @@ const IssueRegSchema = new mongoose.Schema({
   IssueForwardedAtToSupervisor: {
     type: String,
   },
+  IssueForwardedAtToWarden: {
+    type: String,
+  },
+  IssueForwardedAtToDsw: {
+    type: String,
+  },
+  IssueRaisedToWardenTime: { type: String },
+  IssueRaisedToDswTime: { type: String },
   IssueForwardedToWarden: [
     {
       time: String,
