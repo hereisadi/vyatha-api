@@ -2,6 +2,7 @@ const { SignUpModel } = require("../../models/Localauth/Signup");
 // const moment = require("moment-timezone");
 const bcrypt = require("bcrypt");
 const { sendEmail } = require("../../utils/EmailService");
+const { compareTimes } = require("../../lib/TimeComparison");
 
 // POST req to reset the password
 // access: public
@@ -44,8 +45,15 @@ const resetPassword = async (req, res) => {
 
     // check if token is expired
     const tokenExpiration = user.tokenExpiration;
+    console.log("tokenExpiration :", tokenExpiration);
+    console.log("currentTime :", currentTime);
+    const timeComparisonOutput = compareTimes(tokenExpiration, currentTime);
+    console.log("timeComaparisonOutput", timeComparisonOutput);
     // const currentTime = moment.tz("Asia/Kolkata").format("DD-MM-YY h:mma");
-    if (tokenExpiration < currentTime) {
+    if (
+      timeComparisonOutput === "Time 1 is earlier than Time 2." ||
+      timeComparisonOutput === "Time 1 is the same as Time 2."
+    ) {
       return res.status(400).json({ error: "Token expired" });
     } else {
       const hashedPassword = await bcrypt.hash(trimPassword, 10);

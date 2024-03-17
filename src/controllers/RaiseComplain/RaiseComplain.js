@@ -119,6 +119,7 @@ const raiseComplain = async (req, res) => {
         console.log("currentTime:", currentTime);
 
         const value = check7DayDifference(firstComplainTime, currentTime);
+        console.log("value", value);
         const secondCheckValue = check7DayDifference(
           SecondComplainTime,
           currentTime

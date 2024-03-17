@@ -1,10 +1,25 @@
 const check7DayDifference = (firstTime, secondTime) => {
+  if (!firstTime || !secondTime) {
+    return console.error("BOth times are required");
+  }
+
   firstTime = firstTime?.toString();
   secondTime = secondTime?.toString();
   const formatDate = (dateString) => {
+    console.log("Date String:", dateString);
     const [datePart, timePart] = dateString.split(" ");
+    console.log("Date Part:", datePart);
+    console.log("Time Part:", timePart);
+
     const [day, month, year] = datePart.split("-");
+    console.log("Day:", day);
+    console.log("Month:", month);
+    console.log("Year:", year);
+
     const [hour, minute] = timePart.split(":");
+    console.log("Hour:", hour);
+    console.log("Minute:", minute);
+
     return new Date(year, month - 1, day, hour, minute);
   };
 
