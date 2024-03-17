@@ -174,13 +174,12 @@ const fetchIssues = async (req, res) => {
 
         // console.log(filteredWardenNotifications.length);
 
-        const allComplaintsRaisedToWarden = allComplains
-          .filter((complain) => {
-            return complain.raiseComplainTo.length === 2;
-          })
-          .sort({
-            IssueRaisedToWardenTime: 1, // oldest to newest
-          });
+        const allComplaintsRaisedToWarden = allComplains.filter((complain) => {
+          return complain.raiseComplainTo.length === 2;
+        });
+        // .sort({
+        //   IssueRaisedToWardenTime: 1, // oldest to newest
+        // });
 
         const closedIssuesAssignedToWarden = await IssueRegModel.find({
           forwardedTo: { $in: ["warden", "dsw"] },
@@ -226,13 +225,12 @@ const fetchIssues = async (req, res) => {
 
         const filteredDswNotifications = dswData;
 
-        const allComplaintsRaisedToDsw = allComplains
-          .filter((complain) => {
-            return complain.raiseComplainTo.length === 3;
-          })
-          .sort({
-            IssueRaisedToDswTime: +1, // oldest to newest
-          });
+        const allComplaintsRaisedToDsw = allComplains.filter((complain) => {
+          return complain.raiseComplainTo.length === 3;
+        });
+        // .sort({
+        //   IssueRaisedToDswTime: +1, // oldest to newest
+        // });
 
         const closedIssuesAssignedToDsw = await IssueRegModel.find({
           forwardedTo: "dsw",
