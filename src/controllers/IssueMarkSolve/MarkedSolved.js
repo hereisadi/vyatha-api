@@ -12,6 +12,8 @@ const { v4: uuidv4 } = require("uuid");
 // access: private
 /// endpoint : /issuesolved
 
+// todo: when marked as solved, its notification should go to 1) dean,warden if issue was forwarded to dsw 2) warden, if issue was forwarded to warden
+
 const markedAsSolved = async (req, res) => {
   verifyToken(req, res, async () => {
     try {
@@ -63,6 +65,7 @@ const markedAsSolved = async (req, res) => {
             await issue.save();
 
             // student notification
+            // this will be done every time
             const Snotification = {
               id: uuidv4(),
               time: solvedAt,
@@ -76,6 +79,47 @@ const markedAsSolved = async (req, res) => {
 
             notification.student.push(Snotification);
             await notification.save();
+
+            if (issue.forwardedTo === "dsw") {
+              // DSW NOTIFICATION
+              const newNotification = {
+                id: uuidv4(),
+                time: solvedAt,
+                message: `Issue has been marked as Solved by the Supervisor of ${user.hostel}`,
+                isRead: false,
+                issueTitle: issue.title,
+                hostel: issue.hostel,
+                issueID: issue._id,
+              };
+              notification.dsw.push(newNotification);
+              await notification.save();
+
+              // WARDEN NOTIFICATION
+              const notificationDetails = {
+                id: uuidv4(),
+                time: solvedAt,
+                message: `Issue has been marked as Solved by the Supervisor of ${user.hostel}`,
+                isRead: false,
+                issueTitle: issue.title,
+                hostel: issue.hostel,
+                issueID: issue._id,
+              };
+              notification.warden.push(notificationDetails);
+              await notification.save();
+            } else if (issue.forwardedTo === "warden") {
+              // WARDEN NOTIFICATION
+              const notificationDetails = {
+                id: uuidv4(),
+                time: solvedAt,
+                message: `Issue has been marked as Solved by the Supervisor of ${user.hostel}`,
+                isRead: false,
+                issueTitle: issue.title,
+                hostel: issue.hostel,
+                issueID: issue._id,
+              };
+              notification.warden.push(notificationDetails);
+              await notification.save();
+            }
 
             res.status(200).json({
               success: true,
