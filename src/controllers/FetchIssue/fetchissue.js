@@ -1,3 +1,4 @@
+const { customSort } = require("../../lib/CustomSort");
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
@@ -29,14 +30,29 @@ const fetchIssues = async (req, res) => {
 
       const allComplains = await IssueRegModel.find({});
 
+      // ! we have to make custom sorting for the issues based on the time of creation of the issue
+
       // for student
       if (user.role === "student") {
-        const allIssues = await IssueRegModel.find({
+        const allUnsortedIssues = await IssueRegModel.find({
           email: user.email,
           isClosed: false,
-        }).sort({
-          IssueCreatedAt: -1, // sort newest to oldest
         });
+        // .sort({
+        //   IssueCreatedAt: -1, // sort newest to oldest
+        // });
+
+        const issueCreatedAtList = allUnsortedIssues.map(
+          (issue) => issue.IssueCreatedAt
+        );
+
+        const sortedIssueCreatedAtList = customSort(issueCreatedAtList, -1);
+
+        const allIssues = sortedIssueCreatedAtList.map((issueCreatedAt) =>
+          allUnsortedIssues.find(
+            (issue) => issue.IssueCreatedAt === issueCreatedAt
+          )
+        );
 
         const allNotifications = await NotificationModel.find({});
 
@@ -52,11 +68,22 @@ const fetchIssues = async (req, res) => {
         }
         // console.log(studentData.length);
 
-        const filteredStudentNotifications = studentData.filter((student) => {
-          return student.email === user.email;
-        });
+        const filteredStudentNotificationsUnsorted = studentData.filter(
+          (student) => {
+            return student.email === user.email;
+          }
+        );
 
-        // console.log(filteredStudentData);
+        const notificationsTime = filteredStudentNotificationsUnsorted.map(
+          (notification) => notification.time
+        );
+        const sortedNotificationsTime = customSort(notificationsTime, -1); // newest to oldest
+        const filteredStudentNotifications = sortedNotificationsTime.map(
+          (time) =>
+            filteredStudentNotificationsUnsorted.find(
+              (notification) => notification.time === time
+            )
+        );
 
         // ? fetching the raised complains by the user:
 
@@ -73,12 +100,21 @@ const fetchIssues = async (req, res) => {
           }
         }
 
-        const allClosedIssues = await IssueRegModel.find({
+        const allClosedIssuesUnsorted = await IssueRegModel.find({
           email: user.email,
           isClosed: true,
-        }).sort({
-          closedAt: -1, // sort from newest to oldest; +1 for oldest to newest
         });
+        // .sort({
+        //   closedAt: -1, // sort from newest to oldest; +1 for oldest to newest
+        // });
+
+        const closedIssueTime = allClosedIssuesUnsorted.map(
+          (issue) => issue.closedAt
+        );
+        const sortedClosedIssueTime = customSort(closedIssueTime, -1); // newest to oldest
+        const allClosedIssues = sortedClosedIssueTime.map((time) =>
+          allClosedIssuesUnsorted.find((issue) => issue.closedAt === time)
+        );
 
         res.status(200).json({
           success: true,
@@ -90,15 +126,27 @@ const fetchIssues = async (req, res) => {
 
         // for supervisor
       } else if (user.role === "supervisor") {
-        const issuesAssignedToSupervisor = await IssueRegModel.find({
+        const issuesAssignedToSupervisorUnsorted = await IssueRegModel.find({
           // below code has been commented out as all issues should be listed in the supervisor's dashboard, moreover only supervisor can mark any issue to be solved
 
           // forwardedTo: "supervisor",
           hostel: user.hostel,
           isClosed: false,
-        }).sort({
-          IssueForwardedAtToSupervisor: +1, //  +1 for oldest to newest
         });
+        // .sort({
+        //   IssueForwardedAtToSupervisor: +1, //  +1 for oldest to newest
+        // });
+
+        const issueForwardingTime = issuesAssignedToSupervisorUnsorted.map(
+          (issue) => issue.IssueForwardedAtToSupervisor
+        );
+        const sortedIssueForwardingTime = customSort(issueForwardingTime, 1); // oldest to newest
+        const issuesAssignedToSupervisor = sortedIssueForwardingTime.map(
+          (time) =>
+            issuesAssignedToSupervisorUnsorted.find(
+              (issue) => issue.IssueForwardedAtToSupervisor === time
+            )
+        );
 
         const allNotifications = await NotificationModel.find({});
 
@@ -114,10 +162,22 @@ const fetchIssues = async (req, res) => {
         }
         // console.log(superVisorData.length);
 
-        const filteredSupervisorNotifications = superVisorData.filter(
+        const filteredSupervisorNotificationsUnsorted = superVisorData.filter(
           (supervisor) => {
             return supervisor.hostel === user.hostel;
           }
+        );
+        const notificationsTime = filteredSupervisorNotificationsUnsorted.map(
+          (notification) => notification.time
+        );
+
+        const sortedNotificationsTime = customSort(notificationsTime, -1); // newest to oldest
+
+        const filteredSupervisorNotifications = sortedNotificationsTime.map(
+          (time) =>
+            filteredSupervisorNotificationsUnsorted.find(
+              (notification) => notification.time === time
+            )
         );
 
         // console.log(filteredSupervisorNotifications);
@@ -131,12 +191,24 @@ const fetchIssues = async (req, res) => {
           }
         );
 
-        const closedIssuesAssignedToSupervisor = await IssueRegModel.find({
-          hostel: user.hostel,
-          isClosed: true,
-        }).sort({
-          closedAt: -1, // sort from newest to oldest; +1 for oldest to newest
-        });
+        const closedIssuesAssignedToSupervisorUnsorted =
+          await IssueRegModel.find({
+            hostel: user.hostel,
+            isClosed: true,
+          });
+        // .sort({
+        //   closedAt: -1, // sort from newest to oldest; +1 for oldest to newest
+        // });
+        const closedIssueTime = closedIssuesAssignedToSupervisorUnsorted.map(
+          (issue) => issue.closedAt
+        );
+        const sortedClosedIssueTime = customSort(closedIssueTime, -1); // newest to oldest
+        const closedIssuesAssignedToSupervisor = sortedClosedIssueTime.map(
+          (time) =>
+            closedIssuesAssignedToSupervisorUnsorted.find(
+              (issue) => issue.closedAt === time
+            )
+        );
 
         res.status(200).json({
           success: true,
@@ -148,13 +220,24 @@ const fetchIssues = async (req, res) => {
 
         // for warden
       } else if (user.role === "warden") {
-        const sortedIssues = await IssueRegModel.find({
+        const sortedIssuesUnsorted = await IssueRegModel.find({
           forwardedTo: { $in: ["warden", "dsw"] },
           hostel: user.hostel,
           isClosed: false,
-        }).sort({
-          IssueForwardedAtToWarden: +1, //  +1 for oldest to newest
         });
+        // .sort({
+        //   IssueForwardedAtToWarden: +1, //  +1 for oldest to newest
+        // });
+
+        const issueForwardingTime = sortedIssuesUnsorted.map(
+          (issue) => issue.IssueForwardedAtToWarden
+        );
+        const sortedIssuesTime = customSort(issueForwardingTime, 1); // oldest to newest
+        const sortedIssues = sortedIssuesTime.map((time) =>
+          sortedIssuesUnsorted.find(
+            (issue) => issue.IssueForwardedAtToWarden === time
+          )
+        );
 
         // FETCHING NOTIFICATIONS FOR WARDEN
         const allNotifications = await NotificationModel.find({});
@@ -168,26 +251,62 @@ const fetchIssues = async (req, res) => {
         }
         // console.log(wardenData.length);
 
-        const filteredWardenNotifications = wardenData.filter((warden) => {
-          return warden.hostel === user.hostel;
-        });
+        const filteredWardenNotificationsUnsorted = wardenData.filter(
+          (warden) => {
+            return warden.hostel === user.hostel;
+          }
+        );
 
+        const notificationsTime = filteredWardenNotificationsUnsorted.map(
+          (notification) => notification.time
+        );
+
+        const sortedNotificationsTime = customSort(notificationsTime, -1); // newest to oldest
+
+        const filteredWardenNotifications = sortedNotificationsTime.map(
+          (time) =>
+            filteredWardenNotificationsUnsorted.find(
+              (notification) => notification.time === time
+            )
+        );
         // console.log(filteredWardenNotifications.length);
 
-        const allComplaintsRaisedToWarden = allComplains.filter((complain) => {
-          return complain.raiseComplainTo.length === 2;
-        });
+        const allComplaintsRaisedToWardenUnsorted = allComplains.filter(
+          (complain) => {
+            return complain.raiseComplainTo.length === 2;
+          }
+        );
+        const forwardedIssuesTime = allComplaintsRaisedToWardenUnsorted.map(
+          (issue) => issue.IssueRaisedToWardenTime
+        );
+        const sortedForwardedIssuesTime = customSort(forwardedIssuesTime, 1); // oldest to newest
+        const allComplaintsRaisedToWarden = sortedForwardedIssuesTime.map(
+          (time) =>
+            allComplaintsRaisedToWardenUnsorted.find(
+              (issue) => issue.IssueRaisedToWardenTime === time
+            )
+        );
         // .sort({
         //   IssueRaisedToWardenTime: 1, // oldest to newest
         // });
 
-        const closedIssuesAssignedToWarden = await IssueRegModel.find({
+        const closedIssuesAssignedToWardenUnsorted = await IssueRegModel.find({
           forwardedTo: { $in: ["warden", "dsw"] },
           hostel: user.hostel,
           isClosed: true,
-        }).sort({
-          closedAt: -1, // newest to oldest
         });
+        // .sort({
+        //   closedAt: -1, // newest to oldest
+        // });
+        const clsoedIssueTime = closedIssuesAssignedToWardenUnsorted.map(
+          (issue) => issue.closedAt
+        );
+        const sortedClosedIssueTime = customSort(clsoedIssueTime, -1); // newest to oldest
+        const closedIssuesAssignedToWarden = sortedClosedIssueTime.map((time) =>
+          closedIssuesAssignedToWardenUnsorted.find(
+            (issue) => issue.closedAt === time
+          )
+        );
 
         res.status(200).json({
           success: true,
@@ -199,13 +318,23 @@ const fetchIssues = async (req, res) => {
 
         // for dsw
       } else if (user.role === "dsw") {
-        const sortedIssues = await IssueRegModel.find({
+        const sortedIssuesUnsorted = await IssueRegModel.find({
           forwardedTo: "dsw",
           // hostel: user.hostel,
           isClosed: false,
-        }).sort({
-          IssueForwardedAtToDsw: +1, // oldest to newest
         });
+        // .sort({
+        //   IssueForwardedAtToDsw: +1, // oldest to newest
+        // });
+        const issuedToDswTime = sortedIssuesUnsorted.map(
+          (issue) => issue.IssueForwardedAtToDsw
+        );
+        const sortedIssuesTime = customSort(issuedToDswTime, 1); // oldest to newest
+        const sortedIssues = sortedIssuesTime.map((time) =>
+          sortedIssuesUnsorted.find(
+            (issue) => issue.IssueForwardedAtToDsw === time
+          )
+        );
 
         // FETCHING NOTIFICATIONS FOR DSW
         const allNotifications = await NotificationModel.find({});
@@ -217,28 +346,58 @@ const fetchIssues = async (req, res) => {
             dswData.push(...notification.dsw);
           }
         }
+
+        const notificationsTime = dswData.map(
+          (notification) => notification.time
+        );
+        const sortedNotificationsTime = customSort(notificationsTime, -1); // newest to oldest
+        const filteredDswNotifications = sortedNotificationsTime.map((time) =>
+          dswData.find((notification) => notification.time === time)
+        );
         // console.log(dswData.length);
 
         // const filteredDswNotifications = dswData.filter((dsw) => {
         //   return dsw.hostel === user.hostel;
         // });
 
-        const filteredDswNotifications = dswData;
+        // const filteredDswNotifications = dswData;
 
-        const allComplaintsRaisedToDsw = allComplains.filter((complain) => {
-          return complain.raiseComplainTo.length === 3;
-        });
+        const allComplaintsRaisedToDswUnsorted = allComplains.filter(
+          (complain) => {
+            return complain.raiseComplainTo.length === 3;
+          }
+        );
+
+        const raisedIssueTime = allComplaintsRaisedToDswUnsorted.map(
+          (issue) => issue.IssueRaisedToDswTime
+        );
+        const sortedRaisedIssueTime = customSort(raisedIssueTime, 1); // oldest to newest
+        const allComplaintsRaisedToDsw = sortedRaisedIssueTime.map((time) =>
+          allComplaintsRaisedToDswUnsorted.find(
+            (issue) => issue.IssueRaisedToDswTime === time
+          )
+        );
         // .sort({
         //   IssueRaisedToDswTime: +1, // oldest to newest
         // });
 
-        const closedIssuesAssignedToDsw = await IssueRegModel.find({
+        const closedIssuesAssignedToDswUnsorted = await IssueRegModel.find({
           forwardedTo: "dsw",
           // hostel: user.hostel,
           isClosed: true,
-        }).sort({
-          closedAt: -1, // newest to oldest
         });
+        // .sort({
+        //   closedAt: -1, // newest to oldest
+        // });
+        const closedIssueTime = closedIssuesAssignedToDswUnsorted.map(
+          (issue) => issue.closedAt
+        );
+        const sortedClosedIssueTime = customSort(closedIssueTime, -1); // newest to oldest
+        const closedIssuesAssignedToDsw = sortedClosedIssueTime.map((time) =>
+          closedIssuesAssignedToDswUnsorted.find(
+            (issue) => issue.closedAt === time
+          )
+        );
 
         res.status(200).json({
           success: true,
@@ -250,17 +409,35 @@ const fetchIssues = async (req, res) => {
 
         // for superadmin (vyatha team)
       } else if (user.role === "superadmin") {
-        const AllRegissues = await IssueRegModel.find({ isClosed: false }).sort(
-          {
-            IssueCreatedAt: +1, //  +1 for oldest to newest
-          }
+        const AllRegissuesUnsorted = await IssueRegModel.find({
+          isClosed: false,
+        });
+        // .sort(
+        //   {
+        //     IssueCreatedAt: +1, //  +1 for oldest to newest
+        //   }
+        // );
+        const regIssueTime = AllRegissuesUnsorted.map(
+          (issue) => issue.IssueCreatedAt
+        );
+        const sortedIssuesTime = customSort(regIssueTime, 1); // oldest to newest
+        const AllRegissues = sortedIssuesTime.map((time) =>
+          AllRegissuesUnsorted.find((issue) => issue.IssueCreatedAt === time)
         );
 
-        const AllClosedissues = await IssueRegModel.find({
+        const AllClosedissuesUnsorted = await IssueRegModel.find({
           isClosed: true,
-        }).sort({
-          closedAt: -1, // sort from newest to oldest; +1 for oldest to newest
         });
+        // .sort({
+        //   closedAt: -1, // sort from newest to oldest; +1 for oldest to newest
+        // });
+        const closedIssueTime = AllClosedissuesUnsorted.map(
+          (issue) => issue.closedAt
+        );
+        const sortedClosedIssueTime = customSort(closedIssueTime, -1); // newest to oldest
+        const AllClosedissues = sortedClosedIssueTime.map((time) =>
+          AllClosedissuesUnsorted.find((issue) => issue.closedAt === time)
+        );
 
         res.status(200).json({
           sucess: true,

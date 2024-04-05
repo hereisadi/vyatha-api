@@ -1,3 +1,4 @@
+const { customSort } = require("../../../lib/CustomSort");
 const { verifyToken } = require("../../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../../models/issues/issue");
@@ -28,12 +29,23 @@ const FetchAllClosedIssueHostelWise = (req, res) => {
           return res.status(400).json("hostel is missing");
         }
         hostel = hostel.trim();
-        const allHostelSpecificIssues = await IssueRegModel.find({
+        const allHostelSpecificIssuesUnsorted = await IssueRegModel.find({
           hostel: hostel,
           isClosed: true,
-        }).sort({
-          IssueCreatedAt: +1, // sort from newest to oldest; +1 for oldest to newest
         });
+        // .sort({
+        //   IssueCreatedAt: +1, // sort from newest to oldest; +1 for oldest to newest
+        // });
+        const issueTime = allHostelSpecificIssuesUnsorted.map(
+          (issue) => issue.IssueCreatedAt
+        );
+        const soredClosedIssueTime = customSort(issueTime, -1); // newest to oldest
+        const allHostelSpecificIssues = soredClosedIssueTime.map((time) =>
+          allHostelSpecificIssuesUnsorted.find(
+            (issue) => issue.IssueCreatedAt === time
+          )
+        );
+
         res.status(200).json({
           success: true,
           allHostelSpecificIssues,
