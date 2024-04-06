@@ -58,6 +58,9 @@ const { editComplaint } = require("../controllers/EditComplaint/EditComplaint");
 const {
   getScheduleDeleteAccount,
 } = require("../controllers/superadmin/GetScheduledDeleteAccount");
+const {
+  feedbackFromStudent,
+} = require("../controllers/Feedback/FeedbackFromStudent");
 
 // get
 router.get("/", home.home); // tested
@@ -88,6 +91,7 @@ router.post("/verifyotp", verifyOtp);
 router.post("/forgotpassword", forgotPwd);
 router.post("/resetpassword/:token", resetPassword);
 router.post("/sendmagiclink", sendMagicLink);
+router.post("/feedback", feedbackFromStudent);
 
 // put
 router.put("/forwardissue", forwardIssue);
