@@ -112,6 +112,7 @@ const feedbackFromStudent = async (req, res) => {
             feedback: feedback,
             time: currentTime,
           };
+          issue.isStudentSatisfied = "no";
           issue.feedbackFromStudent.push(feedbackFromStudentobject);
 
           // notify the supervisor that the student is not satisfied
@@ -154,6 +155,7 @@ const feedbackFromStudent = async (req, res) => {
             isSatisfied: true,
             time: currentTime,
           };
+          issue.isStudentSatisfied = "yes";
           issue.feedbackFromStudent.push(feedbackFromStudentobject);
           await issue.save();
           return res.status(200).json({

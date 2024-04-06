@@ -94,6 +94,10 @@ const IssueRegSchema = new mongoose.Schema({
       time: String,
     },
   ],
+  isStudentSatisfied: {
+    type: String,
+    default: "not answered",
+  },
   IssueForwardedToWarden: [
     {
       time: String,
