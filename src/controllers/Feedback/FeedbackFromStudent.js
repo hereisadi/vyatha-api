@@ -1,3 +1,4 @@
+const { check3DayDifference } = require("../../lib/CheckIfDifference3Days");
 const { verifyToken } = require("../../middlewares/VerifyToken");
 const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
@@ -7,7 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 // access: student
 // method: POST
 // desc: feedback from student after the issue is marked as solved
-// payload: issueID, isSatisfied, feedback, otherID
+// payload: issueID, isSatisfied, feedback, otherID,currentTime
 // private
 // endpoint: /feedback
 
@@ -51,11 +52,34 @@ const feedbackFromStudent = async (req, res) => {
           });
         }
 
-        // if(issue.feedbackFromStudent.isSatisfied===true || issue.feedbackFromStudent.isSatisfied===false){
-        //     return res.status(401).json({
-        //         error: "Feedback already provided",
-        //     });
-        // }
+        // ! since feedbackFromStudent is an array of objects, find the last object and check if isSatisfied is true then return error if further requests are made to add the feedback
+
+        // ! make sure next feedback can only be added, after 72 hours of the last feedback
+
+        if (issue.feedbackFromStudent.length > 0) {
+          const lastFeedback =
+            issue.feedbackFromStudent[issue.feedbackFromStudent.length - 1];
+          if (lastFeedback.isSatisfied === true) {
+            return res.status(401).json({
+              error: "Satisfied Feedback already provided",
+            });
+          }
+        }
+
+        const lastFeedbackTime =
+          issue.feedbackFromStudent.length > 0 &&
+          issue.feedbackFromStudent[issue.feedbackFromStudent.length - 1].time;
+        // console.log("lastFeedbackTime",lastFeedbackTime);
+        const if72hoursdifference = check3DayDifference(
+          lastFeedbackTime,
+          req.body.currentTime
+        );
+        if (if72hoursdifference === "no") {
+          return res.status(401).json({
+            error:
+              "updated feedback can be provided after 72 hours of the last feedback",
+          });
+        }
 
         if (isSatisfied === false) {
           let { feedback } = req.body;
@@ -83,17 +107,19 @@ const feedbackFromStudent = async (req, res) => {
             });
           }
 
-          issue.feedbackFromStudent = {
+          const feedbackFromStudentobject = {
             isSatisfied: false,
             feedback: feedback,
+            time: currentTime,
           };
+          issue.feedbackFromStudent.push(feedbackFromStudentobject);
 
           // notify the supervisor that the student is not satisfied
           // create the notification for the all the authorities to whom issue was escalated
           const notificationDetails = {
             id: uuidv4(),
             time: currentTime,
-            message: `Student is not satisfied with the resolution of the issue and has provided feedback`,
+            message: `Student is not satisfied with the issue resolution and has provided feedback`,
             isRead: false,
             issueTitle: issue.title,
             hostel: issue.hostel,
@@ -120,12 +146,15 @@ const feedbackFromStudent = async (req, res) => {
           return res.status(200).json({
             success: true,
             message: "Feedback saved successfully",
+            time: currentTime,
           });
         } else {
-          issue.feedbackFromStudent = {
+          const { currentTime } = req.body;
+          const feedbackFromStudentobject = {
             isSatisfied: true,
+            time: currentTime,
           };
-
+          issue.feedbackFromStudent.push(feedbackFromStudentobject);
           await issue.save();
           return res.status(200).json({
             success: true,

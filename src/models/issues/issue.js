@@ -86,10 +86,14 @@ const IssueRegSchema = new mongoose.Schema({
   },
   IssueRaisedToWardenTime: { type: String },
   IssueRaisedToDswTime: { type: String },
-  feedbackFromStudent: {
-    isSatisfied: Boolean,
-    feedback: String,
-  },
+  feedbackFromStudent: [
+    // array of objects
+    {
+      isSatisfied: Boolean,
+      feedback: String,
+      time: String,
+    },
+  ],
   IssueForwardedToWarden: [
     {
       time: String,
