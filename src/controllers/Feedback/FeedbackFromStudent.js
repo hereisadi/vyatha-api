@@ -156,6 +156,50 @@ const feedbackFromStudent = async (req, res) => {
             time: currentTime,
           };
           issue.isStudentSatisfied = "yes";
+          // ! if student has already provided not satisfied feedback, then update his feedback to satisfied then notify the every authority to whom the issue was escalated
+          if (
+            issue.feedbackFromStudent.length > 0 &&
+            issue.feedbackFromStudent[issue.feedbackFromStudent.length - 1]
+              .isSatisfied === false
+          ) {
+            const { otherID } = req.body;
+            const notification = await NotificationModel.findOne({
+              otherID: otherID,
+            });
+
+            if (!notification) {
+              return res.status(401).json({
+                error: "No notification exists",
+              });
+            }
+            const notificationDetails = {
+              id: uuidv4(),
+              time: currentTime,
+              message: `Student is now Satisfied with the issue resolution`,
+              isRead: false,
+              issueTitle: issue.title,
+              hostel: issue.hostel,
+              issueID: issue._id,
+            };
+
+            if (issue.forwardedTo === "dsw") {
+              // create notification for dsw, warden and supervisor
+              notification.dsw.push(notificationDetails);
+              notification.warden.push(notificationDetails);
+              notification.supervisor.push(notificationDetails);
+              await notification.save();
+            } else if (issue.forwardedTo === "warden") {
+              // create notification for warden,supervisor
+              notification.warden.push(notificationDetails);
+              notification.supervisor.push(notificationDetails);
+              await notification.save();
+            } else if (issue.forwardedTo === "supervisor") {
+              // create notification for supervisor
+              notification.supervisor.push(notificationDetails);
+              await notification.save();
+            }
+          }
+
           issue.feedbackFromStudent.push(feedbackFromStudentobject);
           await issue.save();
           return res.status(200).json({
