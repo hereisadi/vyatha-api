@@ -61,6 +61,9 @@ const {
 const {
   feedbackFromStudent,
 } = require("../controllers/Feedback/FeedbackFromStudent");
+const {
+  deleteNotifications,
+} = require("../controllers/notifications/DeleteNotifications");
 
 // get
 router.get("/", home.home); // tested
@@ -92,6 +95,7 @@ router.post("/forgotpassword", forgotPwd);
 router.post("/resetpassword/:token", resetPassword);
 router.post("/sendmagiclink", sendMagicLink);
 router.post("/feedback", feedbackFromStudent);
+router.post("/deletenotification", deleteNotifications);
 
 // put
 router.put("/forwardissue", forwardIssue);
@@ -110,4 +114,5 @@ router.put("/editissue", editComplaint);
 
 //delete
 router.delete("/deleteaccount", deleteAccount);
+
 module.exports = router;
