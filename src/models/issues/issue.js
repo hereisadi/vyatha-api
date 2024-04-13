@@ -134,6 +134,7 @@ const IssueRegSchema = new mongoose.Schema({
   closedAt: {
     type: String,
   },
+  closedBy: String,
   comments: [
     {
       commentId: String,
