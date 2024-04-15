@@ -94,6 +94,17 @@ const raiseComplain = async (req, res) => {
           });
         }
 
+        // find all the comments
+        const allComments = issue.comments;
+        for (let i = 0; i < allComments.length; i++) {
+          if (allComments[i].role === "supervisor") {
+            return res.status(401).json({
+              error:
+                "Supervisor has already commented on the issue, can't raise complain",
+            });
+          }
+        }
+
         // if (issue.forwardedTo === "warden") {
         //   if (
         //     moment(currentTime, "DD-MM-YY h:mma").diff(
@@ -136,6 +147,12 @@ const raiseComplain = async (req, res) => {
             // ) > 7
             value === "yes"
           ) {
+            if (issue.forwardedTo === "warden") {
+              return res.status(401).json({
+                error:
+                  "Issue has been forwarded to Warden, can't raise complain",
+              });
+            }
             issue.raiseComplainTo.push({
               whom: "warden",
               when: currentTime,

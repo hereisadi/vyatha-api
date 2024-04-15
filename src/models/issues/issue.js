@@ -144,6 +144,7 @@ const IssueRegSchema = new mongoose.Schema({
       commentBody: String,
       createdAt: String,
       editedAt: String,
+      role: String,
     },
   ],
   isIssueEdited: {
