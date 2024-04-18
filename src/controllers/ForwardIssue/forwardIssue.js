@@ -4,6 +4,7 @@ const { IssueRegModel } = require("../../models/issues/issue");
 // const moment = require("moment-timezone");
 const { NotificationModel } = require("../../models/notification/notification");
 const { v4: uuidv4 } = require("uuid");
+const { sendEmail } = require("../../utils/EmailService");
 
 // put request
 
@@ -75,6 +76,27 @@ const forwardIssue = async (req, res) => {
           issue.IssueForwardedAtToWarden = forwardedAt;
           await issue.save();
 
+          //sending email to warden that issue has been forwarded to him, also to student that issue has been forwarded to warden
+
+          // for the student
+          sendEmail(
+            issue.email,
+            `[Vyatha] Issue Forwarded to the Warden`,
+            `Hello, ${issue.name} \n\n Your issue with the title ${issue.title} has been forwarded to the Warden by the supervisor. \nThanks,\n\n Team Vyatha`
+          );
+
+          const allWardensOfThatHostelWithWardenRole = await SignUpModel.find({
+            hostel: user.hostel,
+            role: "warden",
+          });
+          allWardensOfThatHostelWithWardenRole.forEach((wardenEmail) => {
+            sendEmail(
+              wardenEmail,
+              "[Vyatha] Issue Forwarded to you by the Supervisor",
+              `Hello Warden Sir/Mam of ${user.hostel},\n Supervisor of ${user.hostel} has forwarded one issue with the title ${issue.title} to you. You can get more details by logging in to the Vyatha Website. \n\nYou can login here: https://vyatha.in/auth/login \n\n Team Vyatha`
+            );
+          });
+
           // WARDEN NOTIFICATION
           const notificationDetails = {
             id: uuidv4(),
@@ -142,6 +164,12 @@ const forwardIssue = async (req, res) => {
           issue.IssueForwardedToDsw.push(forwardDetails);
           issue.IssueForwardedAtToDsw = forwardedAt;
           await issue.save();
+
+          sendEmail(
+            issue.email,
+            `[Vyatha] Issue Forwarded to the DEAN SW`,
+            `Hello, ${issue.name} \n\n Your issue with the title ${issue.title} has been forwarded to the DEAN SW by the Warden. \nThanks,\n\n Team Vyatha`
+          );
 
           // DSW NOTIFICATION
           const newNotification = {

@@ -4,6 +4,7 @@ const { IssueRegModel } = require("../../models/issues/issue");
 const { NotificationModel } = require("../../models/notification/notification");
 // const moment = require("moment-timezone");
 const { v4: uuidv4 } = require("uuid");
+const { sendEmail } = require("../../utils/EmailService");
 
 // PUT approve issue
 // role: warden, dsw
@@ -69,6 +70,12 @@ const approveIssue = (req, res) => {
             issue.IssueForwardedToWarden.length - 1
           ].isApproved = true;
           await issue.save();
+
+          sendEmail(
+            issue.email,
+            `[Vyatha] Issue Approved by the Warden of ${user.hostel}`,
+            `Hello, ${issue.name} \n\n Your issue with the title ${issue.title} has been approved by the Warden. \nThanks,\n\n Team Vyatha`
+          );
         } else {
           return res.status(400).json({
             success: false,
@@ -123,6 +130,12 @@ const approveIssue = (req, res) => {
             issue.IssueForwardedToDsw.length - 1
           ].isApproved = true;
           await issue.save();
+
+          sendEmail(
+            issue.email,
+            `[Vyatha] Issue Approved by the DEAN SW`,
+            `Hello, ${issue.name} \n\n Your issue with the title ${issue.title} has been approved by the DEAN SW. \nThanks,\n\n Team Vyatha`
+          );
         } else {
           return res
             .status(400)
