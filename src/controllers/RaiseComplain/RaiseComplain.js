@@ -4,7 +4,8 @@ const { SignUpModel } = require("../../models/Localauth/Signup");
 const { IssueRegModel } = require("../../models/issues/issue");
 const { v4: uuidv4 } = require("uuid");
 const { NotificationModel } = require("../../models/notification/notification");
-const { check7DayDifference } = require("../../lib/differenceBetnTime");
+const { check3DayDifference } = require("../../lib/CheckIfDifference3Days");
+const { sendEmail } = require("../../utils/EmailService");
 
 // access: private
 // endpoint: /raiseComplain
@@ -94,6 +95,17 @@ const raiseComplain = async (req, res) => {
           });
         }
 
+        // find all the comments
+        const allComments = issue.comments;
+        for (let i = 0; i < allComments.length; i++) {
+          if (allComments[i].role === "supervisor") {
+            return res.status(401).json({
+              error:
+                "Supervisor has already commented on the issue, can't raise complain",
+            });
+          }
+        }
+
         // if (issue.forwardedTo === "warden") {
         //   if (
         //     moment(currentTime, "DD-MM-YY h:mma").diff(
@@ -114,13 +126,9 @@ const raiseComplain = async (req, res) => {
         //     });
         //   }
         // }
-        console.log("firstComplainTime :", firstComplainTime);
-        console.log("SecondComplainTime :", SecondComplainTime);
-        console.log("currentTime:", currentTime);
 
-        const value = check7DayDifference(firstComplainTime, currentTime);
-        console.log("value", value);
-        const secondCheckValue = check7DayDifference(
+        const value = check3DayDifference(firstComplainTime, currentTime);
+        const secondCheckValue = check3DayDifference(
           SecondComplainTime,
           currentTime
         );
@@ -136,12 +144,31 @@ const raiseComplain = async (req, res) => {
             // ) > 7
             value === "yes"
           ) {
+            if (issue.forwardedTo === "warden") {
+              return res.status(401).json({
+                error:
+                  "Issue has been forwarded to Warden, can't raise complain",
+              });
+            }
             issue.raiseComplainTo.push({
               whom: "warden",
               when: currentTime,
             });
             issue.IssueRaisedToWardenTime = currentTime;
             issue.save();
+
+            // sending email to all the wardens of that hostel
+            const allWardensOfThatHostelWithWardenRole = await SignUpModel.find(
+              { hostel: user.hostel, role: "warden" }
+            );
+
+            allWardensOfThatHostelWithWardenRole.forEach((wardenEmail) => {
+              sendEmail(
+                wardenEmail,
+                "[Vyatha] Issue raised to Warden by the Student",
+                `Hello Warden Sir/Mam of ${user.hostel},\n ${user.name} with the email id ${user.email}, and ScholarID ${user.scholarID} has raised his/her complaint to the Warden. \nNote: Student can only raise complain directly to Warden only and only if there is no update from Supervisor side. \n\nYou can login here: https://vyatha.in/auth/login \n\n Team Vyatha`
+              );
+            });
 
             // send notifcation to the warden and supervisor
 

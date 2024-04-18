@@ -29,16 +29,24 @@ const addComment = async (req, res) => {
       const issue = await IssueRegModel.findById(issueID);
 
       // to_do: only that role can add comment which is allowed to view that issue
+      // ! dsw should be able to add comment on any issue
+      // ! if issue is forwarded to supervisor, then supervisor can add comment and warden can't
+      // ! if issue is forwarded to warden, then both warden and supervisor can add comment
 
       if (
-        user.email === issue.email || // for student who created the issue
-        // in the below logic if an issue has been forwarded to warden, then supervisor can't add comment
-        (user.role === issue.forwardedTo && user.hostel === issue.hostel) || // for those who have been assigned the issue
-        user.role === "superadmin" || // vyatha team
-        (issue.forwardedTo === "warden" && user.role === "supervisor") ||
+        user.email === issue.email ||
+        user.role === "dsw" ||
+        user.role === "superadmin" ||
+        (user.role === issue.forwardedTo && user.hostel === issue.hostel) ||
+        (issue.forwardedTo === "warden" &&
+          user.role === "supervisor" &&
+          issue.hostel === user.hostel) ||
         (issue.forwardedTo === "dsw" &&
-          (user.role === "supervisor" || user.role === "warden"))
-        // user.role==="student" || issue.
+          user.role === "warden" &&
+          issue.hostel === user.hostel) ||
+        (issue.forwardedTo === "dsw" &&
+          user.role === "supervisor" &&
+          issue.hostel === user.hostel)
       ) {
         const { commentBody, createdAt } = req.body; // client should send commentBody as payload
 
@@ -73,6 +81,7 @@ const addComment = async (req, res) => {
           createdAt: createdAt,
           authoremail: user.email,
           commentId: uuidv4(),
+          role: user.role,
         };
 
         issue.comments.push(newComment);

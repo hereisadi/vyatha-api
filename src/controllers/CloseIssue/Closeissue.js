@@ -58,6 +58,7 @@ const closeIssue = async (req, res) => {
           if (issue.isClosed === false) {
             issue.isClosed = true;
             issue.closedAt = closedAt;
+            issue.closedBy = user.role;
             await issue.save();
 
             const supervisorNotification = {
@@ -163,7 +164,9 @@ const closeIssue = async (req, res) => {
         if (issue.isClosed === false) {
           if (user.hostel === issue.hostel) {
             issue.isClosed = true;
-            (issue.closedAt = closedAt), await issue.save();
+            issue.closedAt = closedAt;
+            issue.closedBy = user.role;
+            await issue.save();
 
             // send notification to the student that your issue has been closed by the supervisor
             // student notification

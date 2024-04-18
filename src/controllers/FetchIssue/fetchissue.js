@@ -336,6 +336,18 @@ const fetchIssues = async (req, res) => {
           )
         );
 
+        const AllIssuesUnsorted = await IssueRegModel.find({
+          isClosed: false,
+        });
+
+        const allIssuesTime = AllIssuesUnsorted.map(
+          (issue) => issue.IssueCreatedAt
+        );
+        const sortedAllIssuesTime = customSort(allIssuesTime, 1);
+        const allIssuedSorted = sortedAllIssuesTime.map((time) =>
+          AllIssuesUnsorted.find((issue) => issue.IssueCreatedAt === time)
+        );
+
         // FETCHING NOTIFICATIONS FOR DSW
         const allNotifications = await NotificationModel.find({});
 
@@ -405,6 +417,7 @@ const fetchIssues = async (req, res) => {
           closedIssuesAssignedToDsw,
           filteredDswNotifications,
           allComplaintsRaisedToDsw,
+          allIssuedSorted,
         });
 
         // for superadmin (vyatha team)

@@ -4,6 +4,7 @@ const { IssueRegModel } = require("../../models/issues/issue");
 // const moment = require("moment-timezone");
 const { NotificationModel } = require("../../models/notification/notification");
 const { v4: uuidv4 } = require("uuid");
+const { sendEmail } = require("../../utils/EmailService");
 
 // put request
 // PUT issue mark solved
@@ -63,6 +64,12 @@ const markedAsSolved = async (req, res) => {
             issue.isSolved = true; // marked as solved
             issue.solvedAt = solvedAt;
             await issue.save();
+
+            sendEmail(
+              issue.email,
+              `[Vyatha] Issue Marked as Solved by the Supervisor of ${issue.hostel}`,
+              `Hello, ${issue.name} \n\n Your issue with the title "${issue.title}" has been marked as solved by the Supervisor.\n\n Do not forget to give the feedback whether the issue is properly solved or not. \nThanks,\n\n Team Vyatha`
+            );
 
             // student notification
             // this will be done every time
