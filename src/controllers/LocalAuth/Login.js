@@ -34,7 +34,7 @@ const login = async (req, res) => {
     }
 
     // ! for accounts that have 2fa OFF
-    if (user.isTwoFactorOn === false || user.isTwoFactorOn === undefined) {
+    if (user.isTwoFactorOn === false) {
       const passwordMatch = await bcrypt.compare(password, user.password);
       if (!passwordMatch) {
         return res.status(401).json({ error: "wrong email or password" });

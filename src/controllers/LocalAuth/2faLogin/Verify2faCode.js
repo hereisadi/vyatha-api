@@ -5,10 +5,10 @@ const jwt = require("jsonwebtoken");
 
 // ! DESC:  POST to verify 2fa code api endpoint
 // ! ACCESS: private
-// ! ENDPOINT: /verify2faCode
+// ! ENDPOINT: /verifycodeforlogin
 // ! PAYLOAD: email, enteredOtp, currentTime
 
-const verify2faCode = async (req, res) => {
+const verify2faCodeForLogin = async (req, res) => {
   try {
     const { email, enteredOtp, currentTime } = req.body;
     if (!email || !enteredOtp || !currentTime) {
@@ -59,4 +59,4 @@ const verify2faCode = async (req, res) => {
   }
 };
 
-module.exports = { verify2faCode };
+module.exports = { verify2faCodeForLogin };

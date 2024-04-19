@@ -66,6 +66,9 @@ const {
 } = require("../controllers/notifications/DeleteNotifications");
 const { deleteComment } = require("../controllers/comments/DeleteComment");
 const { toggle2fa } = require("../controllers/2fa/Toggle2fa");
+const {
+  verify2faCodeForLogin,
+} = require("../controllers/LocalAuth/2faLogin/Verify2faCode");
 
 // get
 router.get("/", home.home); // tested
@@ -88,6 +91,7 @@ router.get("/getscheduledaccounts", getScheduleDeleteAccount);
 router.post("/createissue", issueReg); //tested
 router.post("/signup", signup); //tested
 router.post("/login", login); // tested
+router.post("/verifycodeforlogin", verify2faCodeForLogin);
 // router.post("/detailedview", detailedViewOfIssue);
 router.post("/addcomment/:issueID", addComment);
 router.post("/raisecomplain", raiseComplain);
