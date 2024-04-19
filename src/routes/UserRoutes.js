@@ -64,6 +64,8 @@ const {
 const {
   deleteNotifications,
 } = require("../controllers/notifications/DeleteNotifications");
+const { deleteComment } = require("../controllers/comments/DeleteComment");
+const { toggle2fa } = require("../controllers/2fa/Toggle2fa");
 
 // get
 router.get("/", home.home); // tested
@@ -96,6 +98,7 @@ router.post("/resetpassword/:token", resetPassword);
 router.post("/sendmagiclink", sendMagicLink);
 router.post("/feedback", feedbackFromStudent);
 router.post("/deletenotification", deleteNotifications);
+router.post("/deletecomment/:issueID/:commentID", deleteComment);
 
 // put
 router.put("/forwardissue", forwardIssue);
@@ -111,6 +114,7 @@ router.put("/approveissue", approveIssue);
 router.put("/verifyemail/:token/:currentTime", verifyMagicLink);
 router.put("/studentdeleteaccount", studentDeleteAccount);
 router.put("/editissue", editComplaint);
+router.put("/toggle2fa", toggle2fa);
 
 //delete
 router.delete("/deleteaccount", deleteAccount);
