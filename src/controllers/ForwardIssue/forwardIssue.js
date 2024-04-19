@@ -82,7 +82,7 @@ const forwardIssue = async (req, res) => {
           sendEmail(
             issue.email,
             `[Vyatha] Issue Forwarded to the Warden`,
-            `Hello, ${issue.name} \n\n Your issue with the title ${issue.title} has been forwarded to the Warden by the supervisor. \nThanks,\n\n Team Vyatha`
+            `Hello ${issue.name}, \n\n Your issue with the title ${issue.title} has been forwarded to the Warden by the supervisor. \nThanks,\n\n Team Vyatha`
           );
 
           const allWardensOfThatHostelWithWardenRole = await SignUpModel.find({
@@ -168,7 +168,7 @@ const forwardIssue = async (req, res) => {
           sendEmail(
             issue.email,
             `[Vyatha] Issue Forwarded to the DEAN SW`,
-            `Hello, ${issue.name} \n\n Your issue with the title ${issue.title} has been forwarded to the DEAN SW by the Warden. \nThanks,\n\n Team Vyatha`
+            `Hello ${issue.name}, \n\n Your issue with the title ${issue.title} has been forwarded to the DEAN SW by the Warden. \nThanks,\n\n Team Vyatha`
           );
 
           // DSW NOTIFICATION

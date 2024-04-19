@@ -70,11 +70,20 @@ const login = async (req, res) => {
         );
 
         const otpExpirationTime = addOneHour(time);
-        await OTPModel.findOneAndUpdate(
-          { email: user.email },
-          { otp: OTP },
-          { otpExpiresAt: otpExpirationTime }
-        );
+        const preexistingOtpData = await OTPModel.findOne({ email }).exec();
+        if (preexistingOtpData) {
+          await OTPModel.findOneAndUpdate(
+            { email },
+            { otp: OTP, otpExpiresAt: otpExpirationTime }
+          );
+        } else {
+          const otpData = new OTPModel({
+            email: user.email,
+            otp: OTP,
+            otpExpiresAt: otpExpirationTime,
+          });
+          await otpData.save();
+        }
 
         res.status(200).json({
           message: "Proceed to verify otp page",

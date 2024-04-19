@@ -20,6 +20,12 @@ const verify2faCodeForLogin = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    if (user.isTwoFactorOn === false) {
+      return res
+        .status(400)
+        .json({ error: "2fa is not enabled for this account" });
+    }
+
     const otpData = await OTPModel.findOne({ email }).exec();
     if (!otpData) {
       return res.status(400).json({ error: "no otp has been generated" });
@@ -37,7 +43,9 @@ const verify2faCodeForLogin = async (req, res) => {
         if (enteredOTP !== storedOTP) {
           return res.status(401).json({ error: "wrong otp" });
         } else {
-          await OTPModel.findOneAndDelete({ email: email });
+          otpData.otp = undefined;
+          otpData.otpExpiresAt = undefined;
+          await otpData.save();
           const token = jwt.sign(
             { userId: user._id, email: user.email },
             process.env.YOUR_SECRET_KEY,
