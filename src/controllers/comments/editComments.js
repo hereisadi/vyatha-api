@@ -5,8 +5,10 @@ const { IssueRegModel } = require("../../models/issues/issue");
 
 //PUT to edit comment
 //access:private
-// payload: issueID, commentID as params and commentBody as body (req.body)
+// payload: issueID, commentID as params and commentBody,editedAt as body (req.body)
 // endpoint: /editcomment/:issueID/:commentID
+
+// ! implement delete comment api endpoint
 
 const editComment = (req, res) => {
   verifyToken(req, res, async () => {
@@ -25,6 +27,12 @@ const editComment = (req, res) => {
       const { issueID } = req.params; // client should send issueID as params
       const { commentID } = req.params; // client should send commentID as params
       const { commentBody, editedAt } = req.body; // client should send commentBody as payload
+
+      if (!commentBody || !editedAt) {
+        return res.status(400).json({
+          error: "Please provide commentBody and editedAt",
+        });
+      }
 
       const issue = await IssueRegModel.findById(issueID);
       if (!issue) {

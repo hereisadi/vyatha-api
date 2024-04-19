@@ -74,7 +74,7 @@ const approveIssue = (req, res) => {
           sendEmail(
             issue.email,
             `[Vyatha] Issue Approved by the Warden of ${user.hostel}`,
-            `Hello, ${issue.name} \n\n Your issue with the title ${issue.title} has been approved by the Warden. \nThanks,\n\n Team Vyatha`
+            `Hello ${issue.name}, \n\n Your issue with the title ${issue.title} has been approved by the Warden. \nThanks,\n\n Team Vyatha`
           );
         } else {
           return res.status(400).json({
@@ -134,7 +134,7 @@ const approveIssue = (req, res) => {
           sendEmail(
             issue.email,
             `[Vyatha] Issue Approved by the DEAN SW`,
-            `Hello, ${issue.name} \n\n Your issue with the title ${issue.title} has been approved by the DEAN SW. \nThanks,\n\n Team Vyatha`
+            `Hello ${issue.name}, \n\n Your issue with the title ${issue.title} has been approved by the DEAN SW. \nThanks,\n\n Team Vyatha`
           );
         } else {
           return res

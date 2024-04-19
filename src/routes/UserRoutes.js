@@ -64,6 +64,11 @@ const {
 const {
   deleteNotifications,
 } = require("../controllers/notifications/DeleteNotifications");
+const { deleteComment } = require("../controllers/comments/DeleteComment");
+const { toggle2fa } = require("../controllers/2fa/Toggle2fa");
+const {
+  verify2faCodeForLogin,
+} = require("../controllers/LocalAuth/2faLogin/Verify2faCode");
 
 // get
 router.get("/", home.home); // tested
@@ -86,6 +91,7 @@ router.get("/getscheduledaccounts", getScheduleDeleteAccount);
 router.post("/createissue", issueReg); //tested
 router.post("/signup", signup); //tested
 router.post("/login", login); // tested
+router.post("/verifycodeforlogin", verify2faCodeForLogin);
 // router.post("/detailedview", detailedViewOfIssue);
 router.post("/addcomment/:issueID", addComment);
 router.post("/raisecomplain", raiseComplain);
@@ -96,6 +102,7 @@ router.post("/resetpassword/:token", resetPassword);
 router.post("/sendmagiclink", sendMagicLink);
 router.post("/feedback", feedbackFromStudent);
 router.post("/deletenotification", deleteNotifications);
+router.post("/deletecomment/:issueID/:commentID", deleteComment);
 
 // put
 router.put("/forwardissue", forwardIssue);
@@ -111,6 +118,7 @@ router.put("/approveissue", approveIssue);
 router.put("/verifyemail/:token/:currentTime", verifyMagicLink);
 router.put("/studentdeleteaccount", studentDeleteAccount);
 router.put("/editissue", editComplaint);
+router.put("/toggle2fa", toggle2fa);
 
 //delete
 router.delete("/deleteaccount", deleteAccount);

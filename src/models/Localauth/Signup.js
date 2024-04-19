@@ -71,6 +71,10 @@ const SignUpSchema = new mongoose.Schema({
     type: String,
     default: "no",
   },
+  isTwoFactorOn: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const SignUpModel = mongoose.model("UserSignup", SignUpSchema);
