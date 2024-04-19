@@ -30,6 +30,7 @@ const dashboard = async (req, res) => {
           deleteAccount,
           idcard,
           designation,
+          isTwoFactorOn,
         } = user;
         return res.status(200).json({
           success: true,
@@ -47,6 +48,7 @@ const dashboard = async (req, res) => {
             accountCreatedAt,
             isVerified,
             deleteAccount,
+            isTwoFactorOn,
           },
         });
       } else if (
@@ -65,6 +67,7 @@ const dashboard = async (req, res) => {
           isVerified,
           deleteAccount,
           designation,
+          isTwoFactorOn,
         } = user;
 
         return res.status(200).json({
@@ -80,6 +83,7 @@ const dashboard = async (req, res) => {
             accountCreatedAt,
             isVerified,
             deleteAccount,
+            isTwoFactorOn,
           },
         });
       }
