@@ -97,10 +97,12 @@ const issueReg = async (req, res) => {
             hostel: hostel,
             role: "supervisor",
           });
-
-          thatHostelSupervisor.forEach((supervisorEmail) => {
+          const superVisorEmails = thatHostelSupervisor.map(
+            (superbisor) => superbisor.email
+          );
+          superVisorEmails.forEach((supervisorMail) => {
             sendEmail(
-              supervisorEmail,
+              supervisorMail,
               `[Vyatha] New Issue Registered by ${user.name}`,
               `Hello Warden Sir/Mam of ${user.hostel},\n New Issue has been registered by the ${user.name} bearing Scholar ID:${user.scholarID}. Please login and have a look. \n\nYou can login here: https://vyatha.in/auth/login \n\n Team Vyatha`
             );

@@ -161,8 +161,11 @@ const raiseComplain = async (req, res) => {
             const allWardensOfThatHostelWithWardenRole = await SignUpModel.find(
               { hostel: user.hostel, role: "warden" }
             );
+            const wardenRoleEmails = allWardensOfThatHostelWithWardenRole.map(
+              (admin) => admin.email
+            );
 
-            allWardensOfThatHostelWithWardenRole.forEach((wardenEmail) => {
+            wardenRoleEmails.forEach((wardenEmail) => {
               sendEmail(
                 wardenEmail,
                 "[Vyatha] Issue raised to Warden by the Student",

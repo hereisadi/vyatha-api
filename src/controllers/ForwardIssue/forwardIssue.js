@@ -89,7 +89,10 @@ const forwardIssue = async (req, res) => {
             hostel: user.hostel,
             role: "warden",
           });
-          allWardensOfThatHostelWithWardenRole.forEach((wardenEmail) => {
+          const WardenEmails = allWardensOfThatHostelWithWardenRole.map(
+            (warden) => warden.email
+          );
+          WardenEmails.forEach((wardenEmail) => {
             sendEmail(
               wardenEmail,
               "[Vyatha] Issue Forwarded to you by the Supervisor",

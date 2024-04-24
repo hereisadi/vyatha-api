@@ -4,12 +4,15 @@ const { IssueRegModel } = require("../../models/issues/issue");
 // const moment = require("moment-timezone");
 const { v4: uuidv4 } = require("uuid");
 const { NotificationModel } = require("../../models/notification/notification");
+const { sendEmail } = require("../../utils/EmailService");
 
 // PUT  to solve the issue
 // role: student
 // access: private
 // endpoint: /closeissue
 // payload: issueId
+
+// ! send email to the student if issue has been closed by the supervisor
 
 const closeIssue = async (req, res) => {
   verifyToken(req, res, async () => {
@@ -183,6 +186,13 @@ const closeIssue = async (req, res) => {
 
             notification.student.push(Snotification);
             await notification.save();
+
+            // send email to the student that issue has been closed by the supervisor
+            sendEmail(
+              issue.email,
+              `[Vyatha] Issue Closed by the Supervisor`,
+              `Hello ${issue.name}, \n\n Your issue with the title ${issue.title} has been closed by the Supervisor of hostel ${issue.hostel}. \nThanks,\n\n Team Vyatha`
+            );
             res.status(200).json({
               success: true,
               message: "Issue closed successfully",
