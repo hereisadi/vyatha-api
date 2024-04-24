@@ -104,7 +104,7 @@ const issueReg = async (req, res) => {
             sendEmail(
               supervisorMail,
               `[Vyatha] New Issue Registered by ${user.name}`,
-              `Hello Warden Sir/Mam of ${user.hostel},\n New Issue has been registered by the ${user.name} bearing Scholar ID:${user.scholarID}. Please login and have a look. \n\nYou can login here: https://vyatha.in/auth/login \n\n Team Vyatha`
+              `Hello Supervisor Sir/Mam of ${user.hostel},\n New Issue has been registered by the ${user.name} bearing Scholar ID:${user.scholarID}. Please login and have a look. \n\nYou can login here: https://vyatha.in/auth/login \n\n Team Vyatha`
             );
           });
 
