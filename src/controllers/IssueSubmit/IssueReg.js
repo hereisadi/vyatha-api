@@ -4,6 +4,7 @@ const { IssueRegModel } = require("../../models/issues/issue");
 // const moment = require("moment-timezone");
 const uniqueid = require("../../utils/uniqueid");
 const { NotificationModel } = require("../../models/notification/notification");
+const { sendEmail } = require("../../utils/EmailService");
 // const { customSort } = require("../../lib/CustomSort");
 // post request
 
@@ -90,6 +91,20 @@ const issueReg = async (req, res) => {
             otherID: randomGeneratedID,
           });
           await notificationReg.save();
+
+          // ! send email to the supervisor that new issue has been registered
+          const thatHostelSupervisor = await SignUpModel.find({
+            hostel: hostel,
+            role: "supervisor",
+          });
+
+          thatHostelSupervisor.forEach((supervisorEmail) => {
+            sendEmail(
+              supervisorEmail,
+              `[Vyatha] New Issue Registered by ${user.name}`,
+              `Hello Warden Sir/Mam of ${user.hostel},\n New Issue has been registered by the ${user.name} bearing Scholar ID:${user.scholarID}. Please login and have a look. \n\nYou can login here: https://vyatha.in/auth/login \n\n Team Vyatha`
+            );
+          });
 
           res.status(200).json({
             success: true,
