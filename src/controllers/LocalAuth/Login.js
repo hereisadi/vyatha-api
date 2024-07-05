@@ -15,7 +15,7 @@ require("dotenv").config();
 
 const login = async (req, res) => {
   // emailValidator(req, res, async () => {
-  let { email, password } = req.body; // client should send email and password as payload
+  let { email, password, time, deviceIp, deviceUserAgent } = req.body; // client should send email and password as payload
   if (!email || !password) {
     return res.status(400).json({ error: "Please fill all required fields" });
   }
@@ -46,6 +46,18 @@ const login = async (req, res) => {
         process.env.YOUR_SECRET_KEY,
         { expiresIn: "720h" } // token expires after 30 days for prolonged access in case of inactivity
       );
+
+      const allTokens = user.loginTokens;
+
+      const tokenData = {
+        token: token,
+        tokenGenratedAt: time,
+        tokenGenerationDeviceIp: deviceIp,
+        tokenGenerationDeviceUserAgent: deviceUserAgent,
+      };
+
+      allTokens.push(tokenData);
+      await user.save();
 
       res
         .status(200)

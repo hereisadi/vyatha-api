@@ -10,7 +10,8 @@ const jwt = require("jsonwebtoken");
 
 const verify2faCodeForLogin = async (req, res) => {
   try {
-    const { email, enteredOtp, currentTime } = req.body;
+    const { email, enteredOtp, currentTime, time, deviceIp, deviceUserAgent } =
+      req.body;
     if (!email || !enteredOtp || !currentTime) {
       return res.status(400).json({ error: "Please fill all required fields" });
     }
@@ -51,6 +52,18 @@ const verify2faCodeForLogin = async (req, res) => {
             process.env.YOUR_SECRET_KEY,
             { expiresIn: "720h" }
           );
+
+          const allTokens = user.loginTokens;
+
+          const tokenData = {
+            token: token,
+            tokenGenratedAt: time,
+            tokenGenerationDeviceIp: deviceIp,
+            tokenGenerationDeviceUserAgent: deviceUserAgent,
+          };
+
+          allTokens.push(tokenData);
+          await SignUpModel.save();
 
           res
             .status(200)

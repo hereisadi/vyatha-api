@@ -1,0 +1,2 @@
+- implement the feature of knowing the all loggedin session of a particular email
+- implement to force logout all the devices

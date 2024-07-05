@@ -75,6 +75,18 @@ const SignUpSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  loginTokens: [
+    {
+      token: String,
+      isTokenExpired: {
+        type: Boolean,
+        default: false,
+      },
+      tokenGenratedAt: String,
+      tokenGenerationDeviceIp: String,
+      tokenGenerationDeviceUserAgent: String,
+    },
+  ],
 });
 
 const SignUpModel = mongoose.model("UserSignup", SignUpSchema);
