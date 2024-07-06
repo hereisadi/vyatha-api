@@ -2,6 +2,7 @@ const { compareTimes } = require("../../../lib/TimeComparison");
 const { SignUpModel } = require("../../../models/Localauth/Signup");
 const { OTPModel } = require("../../../models/Localauth/otp/otp");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 
 // ! DESC:  POST to verify 2fa code api endpoint
 // ! ACCESS: private
