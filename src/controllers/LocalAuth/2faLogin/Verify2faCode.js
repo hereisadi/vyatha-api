@@ -11,7 +11,7 @@ const crypto = require("crypto");
 
 const verify2faCodeForLogin = async (req, res) => {
   try {
-    const { email, enteredOtp, currentTime, time, deviceIp, deviceUserAgent } =
+    const { email, enteredOtp, currentTime, deviceIp, deviceUserAgent } =
       req.body;
     if (!email || !enteredOtp || !currentTime) {
       return res.status(400).json({ error: "Please fill all required fields" });
@@ -63,13 +63,13 @@ const verify2faCodeForLogin = async (req, res) => {
 
           const tokenData = {
             token: token,
-            tokenGenratedAt: time,
+            tokenGenratedAt: currentTime,
             tokenGenerationDeviceIp: deviceIp,
             tokenGenerationDeviceUserAgent: deviceUserAgent,
           };
 
           allTokens.push(tokenData);
-          await SignUpModel.save();
+          await user.save();
 
           res
             .status(200)
