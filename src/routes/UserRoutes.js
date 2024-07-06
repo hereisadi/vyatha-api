@@ -73,6 +73,9 @@ const {
   logoutAllDevices,
 } = require("../controllers/LocalAuth/LogoutAllDevices");
 const { Logout } = require("../controllers/LocalAuth/Logout");
+const {
+  logoutFromASpecificDevice,
+} = require("../controllers/LocalAuth/LogoutASpecificDevice");
 
 // get
 router.get("/", home.home); // tested
@@ -124,6 +127,7 @@ router.put("/studentdeleteaccount", studentDeleteAccount);
 router.put("/editissue", editComplaint);
 router.put("/toggle2fa", toggle2fa);
 router.put("/logout", Logout);
+router.put("/logoutfromdevice", logoutFromASpecificDevice);
 router.put("/logouteverywhere", logoutAllDevices);
 
 //delete
