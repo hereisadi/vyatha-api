@@ -69,6 +69,10 @@ const { toggle2fa } = require("../controllers/2fa/Toggle2fa");
 const {
   verify2faCodeForLogin,
 } = require("../controllers/LocalAuth/2faLogin/Verify2faCode");
+const {
+  logoutAllDevices,
+} = require("../controllers/LocalAuth/LogoutAllDevices");
+const { Logout } = require("../controllers/LocalAuth/Logout");
 
 // get
 router.get("/", home.home); // tested
@@ -119,6 +123,8 @@ router.put("/verifyemail/:token/:currentTime", verifyMagicLink);
 router.put("/studentdeleteaccount", studentDeleteAccount);
 router.put("/editissue", editComplaint);
 router.put("/toggle2fa", toggle2fa);
+router.put("/logout", Logout);
+router.put("/logouteverywhere", logoutAllDevices);
 
 //delete
 router.delete("/deleteaccount", deleteAccount);
