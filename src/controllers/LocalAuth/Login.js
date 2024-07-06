@@ -6,6 +6,7 @@ const { addOneHour } = require("../../lib/expireTime");
 const { OTPModel } = require("../../models/Localauth/otp/otp");
 // const emailValidator = require("../../utils/EmailValidation");
 require("dotenv").config();
+const crypto = require("crypto");
 
 // POST account login
 // role:  all
@@ -41,10 +42,16 @@ const login = async (req, res) => {
       }
 
       // accept token as cookies in frontend instead of localstorage
+      const uniqueIdentifier = crypto.randomBytes(16).toString("hex");
+
       const token = jwt.sign(
-        { userId: user._id, email: user.email },
+        {
+          userId: user._id,
+          email: user.email,
+          uniqueIdentifier: uniqueIdentifier,
+        },
         process.env.YOUR_SECRET_KEY,
-        { expiresIn: "720h" } // token expires after 30 days for prolonged access in case of inactivity
+        { expiresIn: "720h" }
       );
 
       const allTokens = user.loginTokens;

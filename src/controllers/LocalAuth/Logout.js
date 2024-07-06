@@ -19,6 +19,8 @@ const Logout = async (req, res) => {
 
       const allTokens = user.loginTokens;
       const token = req.headers.authorization.split(" ")[1];
+      console.log(token);
+      console.log(allTokens);
       for (let i = 0; i < allTokens.length; i++) {
         if (allTokens[i].token === token) {
           allTokens[i].isTokenExpired = true;

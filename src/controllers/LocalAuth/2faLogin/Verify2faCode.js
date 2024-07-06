@@ -47,8 +47,13 @@ const verify2faCodeForLogin = async (req, res) => {
           otpData.otp = undefined;
           otpData.otpExpiresAt = undefined;
           await otpData.save();
+          const uniqueIdentifier = crypto.randomBytes(16).toString("hex");
           const token = jwt.sign(
-            { userId: user._id, email: user.email },
+            {
+              userId: user._id,
+              email: user.email,
+              uniqueIdentifier: uniqueIdentifier,
+            },
             process.env.YOUR_SECRET_KEY,
             { expiresIn: "720h" }
           );
